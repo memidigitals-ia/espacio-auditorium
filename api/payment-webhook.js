@@ -20,6 +20,16 @@ async function getCalendarClient() {
   return google.calendar({ version: 'v3', auth })
 }
 
+async function unblockCalendarDate(calendarEventId) {
+  try {
+    const calendar = await getCalendarClient()
+    const calendarId = process.env.GOOGLE_CALENDAR_ID
+    await calendar.events.delete({ calendarId, eventId: calendarEventId })
+  } catch (err) {
+    console.error('Google Calendar delete error:', err.message)
+  }
+}
+
 async function blockCalendarDate(reservation) {
   try {
     const calendar = await getCalendarClient()
@@ -267,10 +277,6 @@ export default async function handler(req, res) {
       const paymentClient = new Payment(mp)
       const payment = await paymentClient.get({ id: paymentId })
 
-      if (payment.status !== 'approved') {
-        return json(res, { ok: true, status: payment.status })
-      }
-
       const reservationId = payment.external_reference
       if (!reservationId) return json(res, { ok: true })
 
@@ -282,6 +288,23 @@ export default async function handler(req, res) {
         .single()
 
       if (fetchError || !reservation) return json(res, { ok: true })
+
+      // ---- REEMBOLSO / CONTRACARGO ----
+      if (payment.status === 'refunded' || payment.status === 'charged_back' || payment.status === 'cancelled') {
+        if (reservation.calendar_event_id) {
+          await unblockCalendarDate(reservation.calendar_event_id)
+        }
+        await supabase
+          .from('reservations')
+          .update({ status: 'refunded' })
+          .eq('id', reservationId)
+        return json(res, { ok: true, refunded: true })
+      }
+
+      // ---- PAGO APROBADO ----
+      if (payment.status !== 'approved') {
+        return json(res, { ok: true, status: payment.status })
+      }
 
       // Already processed
       if (reservation.status === 'deposit_paid' || reservation.status === 'confirmed') {
