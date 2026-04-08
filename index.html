@@ -26,6 +26,141 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+    <!-- Schema.org: LocalBusiness + EventVenue -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": ["LocalBusiness", "EventVenue"],
+      "name": "Espacio Auditorium",
+      "description": "Espacio de eventos y reuniones en Recoleta, Buenos Aires. Auditorio para 36 personas, salas de reunión y espacios para capacitaciones, seminarios y presentaciones corporativas.",
+      "url": "https://espacioauditorium.com.ar",
+      "telephone": "+54-9-11-3825-5877",
+      "email": "espacioauditorium@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Marcelo T. de Alvear 2153, 2° Piso",
+        "addressLocality": "Recoleta",
+        "addressRegion": "Buenos Aires",
+        "postalCode": "C1122",
+        "addressCountry": "AR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -34.5954,
+        "longitude": -58.3934
+      },
+      "image": "https://espacioauditorium.com.ar/salagaudi.jpg",
+      "openingHours": "Mo-Su 08:00-22:00",
+      "priceRange": "$$",
+      "currenciesAccepted": "ARS",
+      "paymentAccepted": "Credit Card, Debit Card, Bank Transfer",
+      "amenityFeature": [
+        { "@type": "LocationFeatureSpecification", "name": "Proyector HDMI", "value": true },
+        { "@type": "LocationFeatureSpecification", "name": "WiFi 100MB", "value": true },
+        { "@type": "LocationFeatureSpecification", "name": "Aire acondicionado", "value": true },
+        { "@type": "LocationFeatureSpecification", "name": "TV 42\"", "value": true }
+      ],
+      "maximumAttendeeCapacity": 36,
+      "containsPlace": [
+        {
+          "@type": "Room",
+          "name": "Sala Gaudi",
+          "description": "Auditorio principal para 36 personas con proyector HDMI y rotafolio",
+          "maximumAttendeeCapacity": 36
+        },
+        {
+          "@type": "Room",
+          "name": "Sala Pollock",
+          "description": "Sala de reuniones para 12 personas con TV 42\" HDMI",
+          "maximumAttendeeCapacity": 12
+        },
+        {
+          "@type": "Room",
+          "name": "Sala Miro",
+          "description": "Sala de reuniones para 15 personas con TV 42\" HDMI y rotafolio",
+          "maximumAttendeeCapacity": 15
+        }
+      ],
+      "sameAs": [
+        "https://www.espacioauditorium.com.ar"
+      ]
+    }
+    </script>
+
+    <!-- Schema.org: FAQ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿El precio es por sala o por el espacio completo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El precio es por el espacio completo. Al reservar tenés acceso a las tres salas (Gaudi, Pollock y Miro) durante el tiempo contratado."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo reservo una fecha?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Usás el cotizador en espacioauditorium.com.ar: elegís fecha, duración y horario, ves el precio al instante y completás el formulario. Con el 30% de seña la fecha queda bloqueada y el precio congelado."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo se paga la seña?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "La seña (30%) se abona por Mercado Pago (tarjeta, transferencia, débito). El saldo restante (70%) se abona hasta 5 días antes del evento."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Qué incluye el espacio?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sala Gaudi: proyector HDMI y rotafolio, 36 personas. Sala Pollock: TV 42 pulgadas HDMI, 12 personas. Sala Miro: TV 42 pulgadas HDMI y rotafolio, 15 personas. WiFi 100MB y aire acondicionado incluidos en todas las salas."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Hay descuentos por varios días?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Contratando 4 días o más accedés a un 15% de descuento automático."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Dónde está ubicado Espacio Auditorium?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Marcelo T. de Alvear 2153, 2° Piso, Recoleta, CABA. Frente a la Facultad de Odontología UBA, a dos cuadras de Medicina. Subte línea D y múltiples colectivos."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cuál es el precio de la media jornada?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "La media jornada de 4 horas tiene un precio de $629.200 ARS con IVA incluido. Podés elegir turno mañana (8:00 a 13:00) o tarde/noche (14:00 a 22:00)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Se puede hacer streaming o grabar video?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. El espacio ya fue usado para streamings en vivo y grabaciones. La acústica e iluminación de la Sala Gaudi son ideales para producción de contenido."
+          }
+        }
+      ]
+    }
+    </script>
+
     <!-- Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BCN6HGB610"></script>
     <script>
