@@ -76,7 +76,7 @@ function SuccessView({ reservation, loading }) {
             className="card card-gold"
             style={{ textAlign: 'left', marginBottom: '2rem' }}
           >
-            <h3 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Detalle de la reserva</h3>
+            <h3 style={{ fontSize: '1rem', marginBottom: '1rem', color: '#f0f0f0' }}>Detalle de la reserva</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.9rem' }}>
               <InfoRow label="Cliente" value={`${reservation.first_name} ${reservation.last_name}`} />
               <InfoRow label="Email" value={reservation.email} />
@@ -186,8 +186,8 @@ function FailureView() {
 function InfoRow({ label, value }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
-      <span style={{ color: 'var(--app-muted)' }}>{label}</span>
-      <span style={{ fontWeight: 500, textAlign: 'right' }}>{value}</span>
+      <span style={{ color: '#888' }}>{label}</span>
+      <span style={{ fontWeight: 500, textAlign: 'right', color: '#f0f0f0' }}>{value}</span>
     </div>
   )
 }
