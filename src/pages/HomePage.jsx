@@ -73,7 +73,7 @@ export default function HomePage() {
   return (
     <>
       {/* NAV */}
-      <nav style={{
+      <nav className="site-nav" style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         padding: '24px 48px',
@@ -94,8 +94,8 @@ export default function HomePage() {
       </nav>
 
       {/* HERO */}
-      <section style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '1fr 1fr', paddingTop: 80 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 64px 80px 80px' }}>
+      <section className="hero-grid" style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '1fr 1fr', paddingTop: 80 }}>
+        <div className="hero-text" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 64px 80px 80px' }}>
           <span className="anim-1" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 11, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 32 }}>
             <span style={{ display: 'block', width: 32, height: 1, background: 'var(--gold)' }} />
             Recoleta · Buenos Aires
@@ -129,7 +129,7 @@ export default function HomePage() {
           onMouseLeave={e => e.currentTarget.querySelector('img').style.transform = 'scale(1)'}
         >
           <img
-            src="https://espacioauditorium.com.ar/wp-content/uploads/2023/05/salagaudi.jpg"
+            src="/salagaudi.jpg"
             alt="Sala Gaudi - Espacio Auditorium"
             style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85, display: 'block', transition: 'transform 8s ease' }}
           />
@@ -141,14 +141,14 @@ export default function HomePage() {
       </section>
 
       {/* USE CASES */}
-      <section style={{ background: 'var(--black)', padding: '100px 80px' }}>
+      <section className="usecases-section" style={{ background: 'var(--black)', padding: '100px 80px' }}>
         <span className="section-tag" style={{ color: 'var(--gold)' }}>Para qué lo usás</span>
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'white', lineHeight: 1.15, marginBottom: 20 }}>
           El espacio se adapta<br />a tu formato.
         </h2>
         <p style={{ fontSize: 16, color: '#aaa', fontWeight: 300, marginBottom: 60 }}>Alquilás el espacio completo. Elegís cómo usarlo.</p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
+        <div className="usecases-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
           {[
             { icon: '🎙️', title: 'Charlas y Conferencias', desc: 'Butacas rojas, proyector, micrófono. El formato que te hace quedar bien frente a tu audiencia.' },
             { icon: '📡', title: 'Streaming y Grabación', desc: 'Ya se usó para streamings en vivo. Acústica, iluminación y conectividad para producir contenido profesional.' },
@@ -163,7 +163,7 @@ export default function HomePage() {
       </section>
 
       {/* TOUR VIRTUAL */}
-      <div id="tour" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 600 }}>
+      <div id="tour" className="tour-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 600 }}>
         <div style={{ padding: '100px 64px', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: 'var(--off-white)' }}>
           <span className="section-tag">Conocé el espacio</span>
           <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'var(--black)', lineHeight: 1.15, marginBottom: 20 }}>
@@ -189,7 +189,7 @@ export default function HomePage() {
 
       {/* COTIZADOR */}
       <section id="cotizar" style={{ background: 'var(--warm-white)', padding: '100px 80px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, marginBottom: 64, alignItems: 'end' }}>
+        <div className="cotizador-header" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, marginBottom: 64, alignItems: 'end' }}>
           <div>
             <span className="section-tag">Cotizador instantáneo</span>
             <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'var(--black)', lineHeight: 1.15 }}>
@@ -205,8 +205,8 @@ export default function HomePage() {
           <strong>Importante:</strong> Se reservan 30 minutos antes y 30 minutos después de tu evento para limpieza y preparación del espacio.
         </div>
 
-        <div style={{ background: 'white', border: '1px solid var(--gray-light)', padding: 48, borderRadius: 4 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 24 }}>
+        <div className="cotizador-box" style={{ background: 'white', border: '1px solid var(--gray-light)', padding: 48, borderRadius: 4 }}>
+          <div className="cotizador-form" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 24 }}>
             <FormGroup label="Fecha del evento">
               <input
                 type="date"
@@ -239,7 +239,7 @@ export default function HomePage() {
           </div>
 
           {cotizacion && (
-            <div style={{ background: 'var(--black)', borderRadius: 4, padding: '36px 40px', marginTop: 24 }}>
+            <div className="cotizador-result" style={{ background: 'var(--black)', borderRadius: 4, padding: '36px 40px', marginTop: 24 }}>
               <span style={{ fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 16, display: 'block' }}>Tu cotización</span>
 
               {cotizacion.descuento && (
@@ -279,7 +279,30 @@ export default function HomePage() {
               <button
                 className="btn-primary"
                 style={{ width: '100%', marginTop: 24, padding: 18, fontSize: 13, letterSpacing: '0.12em', borderRadius: 2 }}
-                onClick={() => navigate('/reservar')}
+                onClick={() => {
+                  const params = new URLSearchParams()
+                  if (fecha) params.set('from', fecha)
+                  // Map duracion to durationType
+                  if (duracion === '4') {
+                    params.set('duration', 'half_day')
+                    params.set('slot', parseInt(horario) >= 13 ? 'half_day_afternoon' : 'half_day_morning')
+                  } else if (duracion === 'extra4') {
+                    params.set('duration', 'full_day')
+                    params.set('hours', '4')
+                  } else if (duracion === 'dias2') {
+                    params.set('duration', 'full_day')
+                    params.set('days', '2')
+                  } else if (duracion === 'dias3') {
+                    params.set('duration', 'full_day')
+                    params.set('days', '3')
+                  } else if (duracion === 'dias4') {
+                    params.set('duration', 'full_day')
+                    params.set('days', '4')
+                  } else {
+                    params.set('duration', 'full_day')
+                  }
+                  navigate(`/reservar?${params.toString()}`)
+                }}
               >
                 Reservar esta fecha →
               </button>
@@ -289,7 +312,7 @@ export default function HomePage() {
       </section>
 
       {/* CONDICIONES */}
-      <div style={{ background: 'var(--off-white)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
+      <div className="conditions-grid" style={{ background: 'var(--off-white)', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
         {[
           { num: '30%', title: 'Seña para bloquear', desc: 'Con el 30% del total reservás la fecha y el precio queda congelado. Nadie más puede reservar ese día.' },
           { num: '-5d', title: 'Saldo antes del evento', desc: 'El 70% restante se abona hasta 5 días antes del evento. Sin sorpresas ni costos adicionales.' },
@@ -305,7 +328,7 @@ export default function HomePage() {
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'white', lineHeight: 1.15, marginBottom: 60 }}>
           4.9 en Google.<br />Sin palabras.
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+        <div className="reviews-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
           {[
             { author: 'Pablo González', text: 'Las salas son increíbles, espacios súper útiles, la atención que nos brindaron impecable. Todo súper limpio y acorde. Volveremos a elegir el espacio para más eventos.' },
             { author: 'Mati Du', text: 'El espacio está impecable. De los mejores auditorios de CABA. La atención de Sebastián y equipo, 10 puntos. Gracias por todo.' },
@@ -321,7 +344,7 @@ export default function HomePage() {
       </section>
 
       {/* UBICACIÓN */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+      <div className="location-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
         <div style={{ padding: '100px 80px', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: 'var(--warm-white)' }}>
           <span className="section-tag">Dónde estamos</span>
           <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'var(--black)', lineHeight: 1.15, marginBottom: 20 }}>
@@ -434,13 +457,52 @@ export default function HomePage() {
 
       {/* Mobile responsive */}
       <style>{`
+        .container { max-width: 1200px; margin: 0 auto; }
+
         @media (max-width: 1024px) {
-          section { padding: 80px 40px !important; }
-          .hero-section { grid-template-columns: 1fr !important; }
+          .site-nav { padding: 20px 32px !important; }
+          section, .usecases-section { padding: 80px 40px !important; }
+          .hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; padding-top: 72px !important; }
+          .hero-text { padding: 60px 40px !important; order: 2; }
+          .hero-grid > div:last-child { min-height: 400px; order: 1; }
+          .tour-grid { grid-template-columns: 1fr !important; }
+          .tour-grid > div:last-child { min-height: 360px; }
+          .location-grid { grid-template-columns: 1fr !important; }
+          .location-grid > div:last-child { min-height: 340px; }
+          .cotizador-header { grid-template-columns: 1fr !important; gap: 24px !important; }
+          .usecases-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .conditions-grid { grid-template-columns: 1fr !important; }
+          .reviews-grid { grid-template-columns: 1fr !important; }
         }
+
         @media (max-width: 768px) {
-          nav { padding: 16px 24px !important; }
-          section { padding: 60px 24px !important; }
+          .site-nav { padding: 16px 20px !important; }
+          .site-nav a { font-size: 15px !important; }
+          section { padding: 60px 20px !important; }
+          .hero-grid { padding-top: 64px !important; }
+          .hero-text { padding: 40px 20px !important; }
+          .hero-stats { gap: 24px !important; margin-top: 40px !important; }
+          .usecases-grid { grid-template-columns: 1fr !important; }
+          .reviews-grid { grid-template-columns: 1fr !important; }
+          .cotizador-form { grid-template-columns: 1fr !important; }
+          .cotizador-box { padding: 28px 20px !important; }
+          .cotizador-result { padding: 24px 20px !important; }
+          .conditions-grid > div { padding: 40px 24px !important; }
+          .tour-grid > div:first-child { padding: 48px 20px !important; }
+          .location-grid > div:first-child { padding: 60px 20px !important; }
+          footer { padding: 40px 20px !important; flex-direction: column !important; align-items: flex-start !important; gap: 20px !important; }
+          section#cotizar { padding: 60px 20px !important; }
+          section#reservar { padding: 80px 20px !important; }
+        }
+
+        @media (max-width: 480px) {
+          .hero-text { padding: 32px 16px !important; }
+          section { padding: 48px 16px !important; }
+          section#cotizar { padding: 48px 16px !important; }
+          section#reservar { padding: 64px 16px !important; }
+          .site-nav { padding: 14px 16px !important; }
+          .conditions-grid > div { padding: 32px 16px !important; }
+          .cotizador-box { padding: 20px 16px !important; }
         }
       `}</style>
     </>
