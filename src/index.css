@@ -49,6 +49,14 @@ a { color: var(--gold); text-decoration: none; }
 button { font-family: var(--font-sans); cursor: pointer; }
 input, select, textarea { font-family: var(--font-sans); }
 
+/* ---- Layout ---- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  width: 100%;
+}
+
 /* ---- App pages (dark) ---- */
 .app-page {
   background: var(--bg);
@@ -187,6 +195,12 @@ input, select, textarea { font-family: var(--font-sans); }
 ::-webkit-scrollbar-thumb { background: var(--gray-light); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #ccc; }
 
+/* ---- Mobile overrides ---- */
+@media (max-width: 480px) {
+  .card { padding: 1.25rem !important; }
+  .btn-lg { padding: 0.875rem 1.5rem !important; font-size: 0.95rem !important; }
+}
+
 /* react-day-picker */
 .rdp {
   --rdp-cell-size: 44px;
@@ -207,6 +221,133 @@ input, select, textarea { font-family: var(--font-sans); }
 .rdp-day_disabled { color: #333 !important; text-decoration: line-through; }
 .rdp-day_range_middle { background: var(--gold-dim) !important; color: var(--app-text) !important; border-radius: 0 !important; }
 .rdp-day_range_start, .rdp-day_range_end { background: var(--gold) !important; color: #0a0a0a !important; font-weight: 700; }
+
+@media (max-width: 380px) {
+  .rdp { --rdp-cell-size: 38px !important; font-size: 0.82rem !important; }
+}
+
+/* ==========================================
+   DOPPLER POPUP — Override styles
+   ========================================== */
+
+/* Overlay */
+.dp-modal { background: rgba(0,0,0,0.75) !important; backdrop-filter: blur(4px); }
+
+/* Contenedor principal */
+.dp-popup,
+.dp-popup-content,
+[class*="dp-popup"] .form-container,
+[class*="dp-popup"] .dp-form-container {
+  background: #111111 !important;
+  color: #f0f0f0 !important;
+  border: 1px solid rgba(200,144,10,0.3) !important;
+  border-radius: 8px !important;
+  font-family: 'DM Sans', system-ui, sans-serif !important;
+}
+
+/* Título */
+[class*="dp-popup"] h2,
+[class*="dp-popup"] h3,
+[class*="dp-popup"] .title {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: #f0f0f0 !important;
+  font-size: 1.4rem !important;
+}
+
+/* Bajada */
+[class*="dp-popup"] p,
+[class*="dp-popup"] .subtitle,
+[class*="dp-popup"] .description {
+  color: #888 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.6 !important;
+}
+
+/* Labels */
+[class*="dp-popup"] label {
+  color: #888 !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Inputs */
+[class*="dp-popup"] input[type="text"],
+[class*="dp-popup"] input[type="email"] {
+  background: #181818 !important;
+  border: 1px solid #2a2a2a !important;
+  color: #f0f0f0 !important;
+  border-radius: 4px !important;
+  padding: 10px 14px !important;
+  font-family: 'DM Sans', system-ui, sans-serif !important;
+  font-size: 0.9rem !important;
+}
+
+[class*="dp-popup"] input[type="text"]:focus,
+[class*="dp-popup"] input[type="email"]:focus {
+  border-color: rgba(200,144,10,0.5) !important;
+  outline: none !important;
+}
+
+[class*="dp-popup"] input::placeholder {
+  color: #444 !important;
+}
+
+/* Botón enviar */
+[class*="dp-popup"] button[type="submit"],
+[class*="dp-popup"] input[type="submit"],
+[class*="dp-popup"] .dp-button,
+[class*="dp-popup"] .btn-primary {
+  background: #c8900a !important;
+  color: #0a0a0a !important;
+  border: none !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  font-family: 'DM Sans', system-ui, sans-serif !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  font-size: 0.85rem !important;
+  padding: 12px 24px !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
+}
+
+[class*="dp-popup"] button[type="submit"]:hover,
+[class*="dp-popup"] input[type="submit"]:hover {
+  background: #f0b429 !important;
+}
+
+/* Checkbox */
+[class*="dp-popup"] input[type="checkbox"] {
+  accent-color: #c8900a !important;
+}
+
+/* Texto legal */
+[class*="dp-popup"] .legal,
+[class*="dp-popup"] .privacy,
+[class*="dp-popup"] small,
+[class*="dp-popup"] .dp-legal-text {
+  color: #444 !important;
+  font-size: 0.75rem !important;
+}
+
+[class*="dp-popup"] .legal a,
+[class*="dp-popup"] .privacy a {
+  color: #c8900a !important;
+}
+
+/* Botón cerrar */
+[class*="dp-popup"] .close,
+[class*="dp-popup"] .dp-close,
+[class*="dp-popup"] button[aria-label="close"] {
+  color: #555 !important;
+  background: transparent !important;
+}
+
+[class*="dp-popup"] .close:hover {
+  color: #f0f0f0 !important;
+}
 
 /* Landing animations */
 @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
