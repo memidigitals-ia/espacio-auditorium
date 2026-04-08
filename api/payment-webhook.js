@@ -37,9 +37,9 @@ async function blockCalendarDate(reservation) {
 
     // Build time strings with buffer
     const slotTimes = {
-      full_day: { start: '07:30', end: '22:30' }, // 30min buffer each side
-      half_day_morning: { start: '07:30', end: '13:30' },
-      half_day_afternoon: { start: '13:30', end: '22:30' },
+      full_day: { start: '07:00', end: '23:00' }, // 1h buffer each side
+      half_day_morning: { start: '07:00', end: '14:00' }, // 1h buffer: real 8:00-13:00
+      half_day_afternoon: { start: '13:00', end: '23:00' }, // 1h buffer: real 14:00-22:00
     }
 
     const times = slotTimes[reservation.slot_type] || slotTimes.full_day
