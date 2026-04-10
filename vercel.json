@@ -2,11 +2,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "^/api/reservations/([^/]+)$", "dest": "/api/reservations/[id]?id=$1" },
-    { "src": "^/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/api/reservations/:id", "destination": "/api/reservations/[id]" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "functions": {
     "api/**/*.js": {
