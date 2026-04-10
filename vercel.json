@@ -5,6 +5,7 @@
   "routes": [
     { "handle": "filesystem" },
     { "src": "^/api/reservations/([^/]+)$", "dest": "/api/reservations/[id]?id=$1" },
+    { "src": "^/api/(.*)", "dest": "/api/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
   "functions": {
