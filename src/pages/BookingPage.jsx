@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { format } from 'date-fns'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { format, parseISO, addDays } from 'date-fns'
 import { es } from 'date-fns/locale'
 import BookingCalendar from '../components/BookingCalendar'
 import BookingForm from '../components/BookingForm'
@@ -15,15 +15,31 @@ const STEPS = ['Fechas', 'Detalles', 'Pago']
 
 export default function BookingPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  // Pre-load from cotizador params
+  const initFrom = searchParams.get('from')
+  const initDuration = searchParams.get('duration') || 'full_day'
+  const initSlot = searchParams.get('slot') || (initDuration === 'half_day' ? 'half_day_morning' : 'full_day')
+  const initHours = parseInt(searchParams.get('hours') || '0')
+  const initDays = parseInt(searchParams.get('days') || '1')
+
+  const getInitDateRange = () => {
+    if (!initFrom) return { from: undefined, to: undefined }
+    const from = parseISO(initFrom)
+    const to = initDays > 1 ? addDays(from, initDays - 1) : undefined
+    return { from, to }
+  }
+
   const [step, setStep] = useState(0)
-  const [durationType, setDurationType] = useState('full_day')
-  const [slotType, setSlotType] = useState('full_day')
-  const [additionalHours, setAdditionalHours] = useState(0)
-  const [dateRange, setDateRange] = useState({ from: undefined, to: undefined })
+  const [durationType, setDurationType] = useState(initDuration)
+  const [slotType, setSlotType] = useState(initSlot)
+  const [additionalHours, setAdditionalHours] = useState(initHours)
+  const [dateRange, setDateRange] = useState(getInitDateRange)
   const [isLoading, setIsLoading] = useState(false)
   const [paymentError, setPaymentError] = useState(null)
 
-  const { isRangeAvailable } = useAvailability()
+  const { isRangeAvailable, isDateBlocked, loading: availabilityLoading } = useAvailability()
 
   const days = getDaysCount(dateRange?.from, dateRange?.to)
   const pricing = durationType ? calculatePrice({ durationType, days, additionalHours }) : null
@@ -36,6 +52,10 @@ export default function BookingPage() {
   }
 
   const handleDateSelect = (range) => {
+    setDateRange(range || { from: undefined, to: undefined })
+  }
+
+  const handleCalendarRangeChange = (range) => {
     setDateRange(range || { from: undefined, to: undefined })
   }
 
@@ -77,11 +97,21 @@ export default function BookingPage() {
         notes: formData.notes || '',
         policyAccepted: formData.policyAccepted,
         policyAcceptedAt: new Date().toISOString(),
+        coupon: formData.coupon || '',
       }
 
       const { data } = await axios.post('/api/create-payment', payload)
 
       if (data.initPoint) {
+        // Meta Pixel: InitiateCheckout
+        if (window.fbq) {
+          window.fbq('track', 'InitiateCheckout', {
+            value: pricing?.deposit || 0,
+            currency: 'ARS',
+            content_name: 'Reserva Espacio Auditorium',
+            num_items: days,
+          })
+        }
         // Redirect to Mercado Pago
         window.location.href = data.initPoint
       } else {
@@ -256,7 +286,14 @@ export default function BookingPage() {
 
             {/* Calendar */}
             <div className="card" style={{ marginBottom: '1.5rem' }}>
-              <BookingCalendar slotType={slotType} onSelect={handleDateSelect} />
+              <BookingCalendar
+                slotType={slotType}
+                onSelect={handleDateSelect}
+                isDateBlocked={isDateBlocked}
+                loading={availabilityLoading}
+                range={dateRange}
+                setRange={handleCalendarRangeChange}
+              />
             </div>
 
             {/* Price preview */}
@@ -269,9 +306,9 @@ export default function BookingPage() {
               className="btn btn-gold btn-lg btn-full"
               style={{ marginTop: '1.5rem' }}
               onClick={handleContinueToForm}
-              disabled={!dateRange?.from}
+              disabled={!dateRange?.from || (dateRange?.from && isDateBlocked(dateRange.from, slotType))}
             >
-              Continuar
+              {dateRange?.from && isDateBlocked(dateRange.from, slotType) ? 'Fecha no disponible' : 'Continuar'}
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>

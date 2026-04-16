@@ -16,11 +16,21 @@ export default function PaymentStatusPage() {
     if (reservationId) {
       setLoading(true)
       axios.get(`/api/reservations/${reservationId}`)
-        .then(r => setReservation(r.data))
+        .then(r => {
+          setReservation(r.data)
+          // Meta Pixel: Purchase (solo si el pago fue aprobado)
+          if ((status === 'approved' || status === 'success') && window.fbq) {
+            window.fbq('track', 'Purchase', {
+              value: r.data?.deposit_amount || 0,
+              currency: 'ARS',
+              content_name: 'Reserva Espacio Auditorium',
+            })
+          }
+        })
         .catch(console.error)
         .finally(() => setLoading(false))
     }
-  }, [reservationId])
+  }, [reservationId, status])
 
   if (status === 'approved' || status === 'success') {
     return <SuccessView reservation={reservation} loading={loading} />
