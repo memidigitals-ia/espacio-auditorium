@@ -21,6 +21,7 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
   const [pwd, setPwd] = useState('')
   const [pwdError, setPwdError] = useState('')
+  const [adminPwd, setAdminPwd] = useState('')
   const [reservations, setReservations] = useState([])
   const [loading, setLoading] = useState(false)
   const [filter, setFilter] = useState('all')
@@ -46,6 +47,7 @@ export default function AdminPage() {
       })
       if (res.ok) {
         setAuthed(true)
+        setAdminPwd(pwd)
       } else {
         setPwdError('Contraseña incorrecta')
       }
@@ -130,17 +132,22 @@ export default function AdminPage() {
   }
 
   const handleCancel = async (id) => {
-    if (!confirm('¿Cancelar esta reserva? Esta acción no se puede deshacer.')) return
-    const { error } = await supabase
-      .from('reservations')
-      .update({ status: 'cancelled' })
-      .eq('id', id)
-
-    if (error) {
-      alert('Error: ' + error.message)
-    } else {
+    if (!confirm('¿Cancelar esta reserva? Se liberará la fecha en el calendario. Esta acción no se puede deshacer.')) return
+    try {
+      const res = await fetch('/api/admin-cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, password: adminPwd }),
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        alert('Error: ' + (body.error || res.statusText))
+        return
+      }
       fetchReservations()
       setSelected(null)
+    } catch (err) {
+      alert('Error de conexión: ' + err.message)
     }
   }
 
