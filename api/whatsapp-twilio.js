@@ -261,6 +261,16 @@ Reglas de la señal:
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
+const HUMAN_REQUEST_RE = /deriv[aá]|pas[aá]me|hablar con (una persona|alguien|un humano|un asesor)|quiero (una persona|un humano|un asesor|hablar con alguien)|un n[uú]mero|n[uú]mero de contacto|n[uú]mero de tel[eé]fono|tel[eé]fono del equipo|contacto del equipo|con alguien que no sea|no (sos|eres) (una persona|humano)|hab[ií]a con alguien|quiero que me atienda/i
+
+function isHumanRequest(text) {
+  return HUMAN_REQUEST_RE.test(text)
+}
+
+const HUMAN_RESPONSE = `Te paso con el equipo comercial.
+Escribiles directo acá: https://wa.me/5491138255877
+Te van a atender en vivo 👍`
+
 function twiml(text) {
   if (!text) return `<?xml version="1.0" encoding="UTF-8"?><Response></Response>`
   return `<?xml version="1.0" encoding="UTF-8"?><Response><Message><![CDATA[${text}]]></Message></Response>`
@@ -354,6 +364,14 @@ export default async function handler(req, res) {
   try {
     const conv = await getConversation(phone)
     const messages = [...conv.messages, { role: 'user', content: userText }]
+
+    // Derivación inmediata sin pasar por AI
+    if (isHumanRequest(userText)) {
+      const updated = [...messages, { role: 'assistant', content: HUMAN_RESPONSE }]
+      await saveConversation(phone, updated, { status: 'qualified', lead_data: { ...(conv.lead_data || {}), derivacion_manual: 'si' } })
+      res.setHeader('Content-Type', 'text/xml')
+      return res.status(200).send(twiml(HUMAN_RESPONSE))
+    }
 
     const aiResponse = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
