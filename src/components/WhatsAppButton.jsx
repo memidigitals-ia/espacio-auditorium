@@ -1,4 +1,4 @@
-const WA_LINK = 'https://wa.me/5491138255877'
+const WA_LINK = 'https://wa.me/19898534256'
 
 export default function WhatsAppButton({ variant = 'float', message = '' }) {
   const href = message
