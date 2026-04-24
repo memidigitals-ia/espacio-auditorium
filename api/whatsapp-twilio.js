@@ -363,7 +363,9 @@ export default async function handler(req, res) {
     return res.status(200).send(twiml(message))
   } catch (err) {
     console.error('[whatsapp-twilio error]', err)
-    const fallback = `DEBUG ERROR: ${err.message}`
+    const fallback = TEAM
+      ? `Hola! En este momento no puedo responderte. Escribinos directamente: https://wa.me/${TEAM.replace('whatsapp:', '')} 🙏`
+      : `Hola! En este momento no puedo responderte automáticamente. Intentá de nuevo en unos minutos 🙏`
     res.setHeader('Content-Type', 'text/xml')
     return res.status(200).send(twiml(fallback))
   }
