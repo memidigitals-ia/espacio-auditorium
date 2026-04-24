@@ -333,7 +333,7 @@ export default async function handler(req, res) {
     const messages = [...conv.messages, { role: 'user', content: userText }]
 
     const aiResponse = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 600,
       system: SYSTEM_PROMPT,
       messages,
