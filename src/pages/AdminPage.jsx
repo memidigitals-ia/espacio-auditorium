@@ -698,7 +698,7 @@ function InfoRow({ label, value }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', fontSize: '0.88rem' }}>
       <span style={{ color: 'var(--app-muted)' }}>{label}</span>
-      <span style={{ fontWeight: 500, textAlign: 'right' }}>{value}</span>
+      <span style={{ fontWeight: 500, textAlign: 'right', color: 'var(--app-text, #f0f0f0)' }}>{value}</span>
     </div>
   )
 }
