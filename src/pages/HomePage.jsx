@@ -30,6 +30,7 @@ const FAQS = [
   { q: '¿Hay descuentos por varios días?', a: 'Sí. Contratando <strong>4 días o más</strong> accedés a un <strong>15% de descuento</strong> automático. Podés calcularlo en el cotizador.' },
   { q: '¿Dónde está ubicado?', a: '<strong>Marcelo T. de Alvear 2153, 2° Piso, Recoleta, CABA.</strong> Frente a la Facultad de Odontología UBA, a dos cuadras de Medicina. Subte línea D y múltiples colectivos.' },
   { q: '¿Puedo visitar el espacio antes de reservar?', a: 'Podés hacer el <strong>recorrido virtual 360°</strong> desde esta misma página. Si querés una visita presencial, escribinos por WhatsApp y coordinamos.' },
+  { q: '¿Cuál es la política de cancelación?', a: 'La <strong>seña del 30% no es reembolsable</strong>, pero la fecha puede <strong>reprogramarse</strong> con al menos 7 días de anticipación. El saldo (70%) es totalmente reembolsable si se cancela con más de 5 días de anticipación.' },
 ]
 
 function calcCotizacion(duracion) {
@@ -83,14 +84,14 @@ export default function HomePage() {
         <a href="/" style={{ fontFamily: 'var(--font-serif)', fontSize: 18, fontWeight: 500, letterSpacing: '0.02em', color: 'var(--black)', textDecoration: 'none' }}>
           Espacio <span style={{ color: 'var(--gold)' }}>Auditorium</span>
         </a>
-        <button
-          onClick={() => navigate('/reservar')}
-          style={{ background: 'var(--black)', color: 'white', padding: '10px 24px', borderRadius: 2, fontSize: 13, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', border: 'none', cursor: 'pointer', transition: 'background 0.2s, color 0.2s', fontFamily: 'var(--font-sans)' }}
+        <a
+          href="/reservar"
+          style={{ background: 'var(--black)', color: 'white', padding: '10px 24px', borderRadius: 2, fontSize: 13, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', border: 'none', cursor: 'pointer', transition: 'background 0.2s, color 0.2s', fontFamily: 'var(--font-sans)', textDecoration: 'none', display: 'inline-block' }}
           onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold)'; e.currentTarget.style.color = 'var(--black)' }}
           onMouseLeave={e => { e.currentTarget.style.background = 'var(--black)'; e.currentTarget.style.color = 'white' }}
         >
           Reservar fecha
-        </button>
+        </a>
       </nav>
 
       {/* HERO */}
@@ -106,7 +107,7 @@ export default function HomePage() {
           </h1>
 
           <p className="anim-3" style={{ fontSize: 16, fontWeight: 300, color: '#555', lineHeight: 1.7, maxWidth: 420, marginBottom: 48 }}>
-            Un espacio boutique para conferencias, streamings, lanzamientos y workshops. En el corazón de Recoleta, con todo lo que necesitás.
+            Auditorio para 36 personas y salas de reunión en Recoleta, CABA. Conferencias, capacitaciones, streamings y presentaciones corporativas.
           </p>
 
           <div className="anim-4" style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -130,7 +131,10 @@ export default function HomePage() {
         >
           <img
             src="/salagaudi.jpg"
-            alt="Sala Gaudi - Espacio Auditorium"
+            alt="Sala Gaudi - Auditorio Espacio Auditorium Recoleta Buenos Aires"
+            width="960"
+            height="1080"
+            fetchpriority="high"
             style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85, display: 'block', transition: 'transform 8s ease' }}
           />
           <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: 48, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)', color: 'white' }}>
@@ -416,13 +420,13 @@ export default function HomePage() {
         <p style={{ fontSize: 16, color: 'rgba(0,0,0,0.6)', fontWeight: 300, maxWidth: 480, margin: '0 auto 48px' }}>
           Cotizá en segundos y reservá con el 30% de seña. Sin llamadas, sin esperar respuesta.
         </p>
-        <button
+        <a
+          href="/reservar"
           className="btn-primary"
-          style={{ fontSize: 14, padding: '18px 48px' }}
-          onClick={() => navigate('/reservar')}
+          style={{ fontSize: 14, padding: '18px 48px', display: 'inline-block', textDecoration: 'none' }}
         >
           Reservar fecha →
-        </button>
+        </a>
       </section>
 
       {/* FOOTER */}

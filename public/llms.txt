@@ -1,34 +1,66 @@
 # Espacio Auditorium
 
 ## Qué es
-Espacio Auditorium es un espacio de eventos y reuniones ubicado en Recoleta, Buenos Aires, Argentina. Cuenta con tres salas disponibles para alquilar: Sala Gaudi, Sala Pollock y Sala Miro. El precio incluye acceso a las tres salas durante el tiempo contratado.
+Espacio Auditorium es un espacio de eventos y reuniones boutique ubicado en Recoleta, Buenos Aires, Argentina. Es el único auditorio de estas características en el barrio de Recoleta. Cuenta con tres salas disponibles para alquilar: Sala Gaudi, Sala Pollock y Sala Miro. El precio incluye acceso a las tres salas durante el tiempo contratado.
 
 ## Ubicación
-Marcelo T. de Alvear 2153, 2° Piso, Recoleta, CABA, Argentina.
-Frente a la Facultad de Odontología de la UBA. Acceso por subte Línea D.
+Marcelo T. de Alvear 2153, 2° Piso, Recoleta, CABA, Argentina. C.P. C1122.
+Frente a la Facultad de Odontología de la UBA, a dos cuadras de la Facultad de Medicina. Acceso por subte Línea D (estaciones Pueyrredón o Facultad de Medicina). Múltiples líneas de colectivo por Av. Santa Fe y Av. Pueyrredón. Estacionamiento a metros del espacio.
 
 ## Salas
-- **Sala Gaudi**: capacidad 36 personas en formato auditorio, proyector HDMI, rotafolio
-- **Sala Pollock**: capacidad 12 personas, TV 42" HDMI
-- **Sala Miro**: capacidad 15 personas, TV 42" HDMI y rotafolio
-- Todas las salas incluyen WiFi 100MB y aire acondicionado
+- **Sala Gaudi**: capacidad 36 personas en formato auditorio, proyector HDMI, rotafolio. Ideal para conferencias, streaming y grabaciones de video.
+- **Sala Pollock**: capacidad 12 personas, TV 42" HDMI. Ideal para reuniones de equipo y capacitaciones.
+- **Sala Miro**: capacidad 15 personas, TV 42" HDMI y rotafolio. Ideal para workshops y mesas redondas.
+- Todas las salas incluyen WiFi 100MB y aire acondicionado.
 
-## Precios (IVA incluido)
-- Media jornada (4 horas, 8:00–13:00 o 14:00–22:00): $629.200 ARS
-- Jornada completa (8 horas, 8:00–22:00): $943.800 ARS
-- Hora adicional: $157.300 ARS
-- Descuento del 15% para reservas de 4 días o más
-- Se requiere una seña del 30% para confirmar la reserva (vía Mercado Pago)
+## Precios (sin IVA)
+- Media jornada (4 horas, turno mañana 8:00–13:00 o tarde/noche 14:00–22:00): $520.000 ARS
+- Jornada completa (8 horas, 8:00–22:00): $780.000 ARS
+- Hora adicional: $130.000 ARS
+- Descuento del 15% para reservas de 4 días o más (se aplica automáticamente)
+- Se requiere una seña del 30% para confirmar la reserva (vía Mercado Pago: tarjeta, transferencia o débito)
 - El saldo del 70% se abona hasta 5 días antes del evento
 
+## Política de cancelación
+- La seña del 30% no es reembolsable.
+- La fecha puede reprogramarse con al menos 7 días de anticipación sin costo adicional.
+- El saldo (70%) es totalmente reembolsable si se cancela con más de 5 días de anticipación.
+
 ## Usos frecuentes
-Capacitaciones corporativas, jornadas de trabajo, presentaciones, seminarios, conferencias, clases magistrales, streamings en vivo, grabaciones de video, talleres, reuniones de directorio.
+Capacitaciones corporativas, jornadas de trabajo, presentaciones de productos, seminarios, conferencias, clases magistrales, streamings en vivo, grabaciones de video, podcasts, talleres, workshops, reuniones de directorio, networking, lanzamientos.
 
 ## Cómo reservar
-Reserva 100% online en https://espacioauditorium.com.ar — se elige fecha, duración y horario, se abona la seña por Mercado Pago y la confirmación es inmediata y automática.
+Reserva 100% online en https://espacioauditorium.com.ar — se elige fecha, duración y horario en el cotizador, se abona la seña por Mercado Pago y la confirmación es inmediata y automática (sin llamadas, sin esperar respuesta).
+
+## Calificación y reseñas
+- Calificación en Google: 4.9 estrellas (una de las mejor calificadas de CABA en su categoría)
+- Reseñas reales de clientes disponibles en el perfil de Google Business
+
+## Horarios
+Lunes a domingo, 8:00 a 22:00 hs.
 
 ## Contacto
 - Web: https://espacioauditorium.com.ar
 - WhatsApp: +54 9 11 3825-5877
 - Email: espacioauditorium@gmail.com
-- Horario de atención: lunes a viernes, horario comercial
+- Instagram: https://www.instagram.com/espacioauditoriumeventos/
+
+## Preguntas frecuentes
+
+**¿El precio es por sala o por el espacio completo?**
+El precio es por el espacio completo. Al reservar tenés acceso a las tres salas (Gaudi, Pollock y Miro) durante el tiempo contratado.
+
+**¿Hay descuentos?**
+Sí. Contratando 4 días o más accedés a un 15% de descuento automático.
+
+**¿Se puede hacer streaming o grabar video?**
+Sí. La Sala Gaudi ya fue usada para streamings en vivo y grabaciones. La acústica e iluminación son ideales para producción de contenido.
+
+**¿Tienen estacionamiento?**
+No tienen estacionamiento propio, pero hay múltiples cocheras a metros del espacio.
+
+**¿Se puede personalizar la disposición de las salas?**
+Sí, la disposición de mesas y sillas es flexible según el tipo de evento (auditorio, reunión, workshop, etc.).
+
+**¿Hay catering o coffee break?**
+No ofrecen catering propio, pero el espacio permite el ingreso de catering externo.
