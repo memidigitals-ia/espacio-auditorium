@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 import twilio from 'twilio'
+import { google } from 'googleapis'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
@@ -319,6 +320,46 @@ function formatTeamMsg(lead, phone) {
   )
 }
 
+// ─── Google Sheets ───────────────────────────────────────────────────────────
+
+async function appendLeadToSheet(lead, phone) {
+  const sheetId = process.env.GOOGLE_LEADS_SHEET_ID
+  if (!sheetId) return
+
+  try {
+    const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON || process.env.GOOGLE_SERVICE_ACCOUNT_KEY)
+    const auth = new google.auth.GoogleAuth({
+      credentials: serviceAccount,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    })
+    const sheets = google.sheets({ version: 'v4', auth })
+
+    const now = new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })
+    const row = [
+      now,
+      phone.replace('whatsapp:', ''),
+      lead.nombre  || '',
+      lead.empresa || '',
+      lead.email   || '',
+      lead.fecha   || '',
+      lead.personas || '',
+      lead.tipo    || '',
+      lead.duracion || '',
+      lead.urgencia || '',
+      lead.notas   || '',
+    ]
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: sheetId,
+      range: 'Leads!A:K',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: [row] },
+    })
+  } catch (err) {
+    console.error('[sheets error]', err.message)
+  }
+}
+
 // ─── Supabase ────────────────────────────────────────────────────────────────
 
 async function getConversation(phone) {
@@ -394,6 +435,7 @@ export default async function handler(req, res) {
           .create({ from: FROM, to: TEAM, body: formatTeamMsg(lead, phone) })
           .catch(err => console.error('[team notify error]', err.message))
       }
+      appendLeadToSheet(lead, phone).catch(err => console.error('[sheets error]', err.message))
     } else if (action === 'close') {
       await saveConversation(phone, updated, { status: 'closed' })
     } else {

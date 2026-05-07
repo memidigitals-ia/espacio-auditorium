@@ -60,6 +60,11 @@ export default function AdminPage() {
     if (!authed) return
     fetchReservations()
     fetchBlockedDates()
+    const interval = setInterval(() => {
+      fetchReservations()
+      fetchBlockedDates()
+    }, 24 * 60 * 60 * 1000)
+    return () => clearInterval(interval)
   }, [authed, filter])
 
   useEffect(() => {
@@ -116,13 +121,13 @@ export default function AdminPage() {
   const fetchWaConversations = async () => {
     setWaLoading(true)
     try {
-      let query = supabase
-        .from('whatsapp_conversations')
-        .select('*')
-        .order('updated_at', { ascending: false })
-      if (waFilter !== 'all') query = query.eq('status', waFilter)
-      const { data, error } = await query
-      if (error) throw error
+      const res = await fetch('/api/admin-wa-conversations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: adminPwd, status: waFilter }),
+      })
+      if (!res.ok) throw new Error('Error al cargar conversaciones')
+      const data = await res.json()
       setWaConversations(data || [])
     } catch (err) {
       console.error(err)
