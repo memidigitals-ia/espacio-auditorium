@@ -363,19 +363,20 @@ export default async function handler(req, res) {
   try {
     const conv = await getConversation(phone)
 
-    // Registrar en Sheets la primera vez que escribe (persistido en Supabase)
-    if (!conv.lead_data?.sheet_logged) {
-      logFirstContact(phone, userText).catch(err => console.error('[sheets first-contact error]', err.message))
-      saveConversation(phone, conv.messages, {
-        lead_data: { ...(conv.lead_data || {}), sheet_logged: true }
-      }).catch(() => {})
-    }
+    // sheet_logged se preserva en TODOS los saves para evitar filas duplicadas
+    const baseLeadData = conv.lead_data || {}
+    const needsSheetLog = !baseLeadData.sheet_logged
+
     const messages = [...conv.messages, { role: 'user', content: userText }]
 
     // Derivación inmediata sin pasar por AI
     if (isHumanRequest(userText)) {
       const updated = [...messages, { role: 'assistant', content: HUMAN_RESPONSE }]
-      await saveConversation(phone, updated, { status: 'qualified', lead_data: { ...(conv.lead_data || {}), derivacion_manual: 'si' } })
+      const ld = { ...baseLeadData, derivacion_manual: 'si', sheet_logged: true }
+      await saveConversation(phone, updated, { status: 'qualified', lead_data: ld })
+      if (needsSheetLog) {
+        logFirstContact(phone, userText).catch(err => console.error('[sheets first-contact error]', err.message))
+      }
       res.setHeader('Content-Type', 'text/xml')
       return res.status(200).send(twiml(HUMAN_RESPONSE))
     }
@@ -409,7 +410,8 @@ export default async function handler(req, res) {
     const updated = [...messages, { role: 'assistant', content: message }]
 
     if (action === 'qualify' && lead) {
-      await saveConversation(phone, updated, { status: 'qualified', lead_data: lead })
+      // Preservar sheet_logged al guardar lead data
+      await saveConversation(phone, updated, { status: 'qualified', lead_data: { ...lead, sheet_logged: true } })
       if (TEAM) {
         twilioClient.messages
           .create({ from: FROM, to: TEAM, body: formatTeamMsg(lead, phone) })
@@ -417,9 +419,14 @@ export default async function handler(req, res) {
       }
       appendLeadToSheet(lead, phone, updated).catch(err => console.error('[sheets error]', err.message))
     } else if (action === 'close') {
-      await saveConversation(phone, updated, { status: 'closed' })
+      await saveConversation(phone, updated, { status: 'closed', lead_data: { ...baseLeadData, sheet_logged: true } })
     } else {
-      await saveConversation(phone, updated)
+      await saveConversation(phone, updated, { lead_data: { ...baseLeadData, sheet_logged: true } })
+    }
+
+    // Loguear primer contacto DESPUÉS de guardar (una sola vez por contacto)
+    if (needsSheetLog) {
+      logFirstContact(phone, userText).catch(err => console.error('[sheets first-contact error]', err.message))
     }
 
     res.setHeader('Content-Type', 'text/xml')
