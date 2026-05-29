@@ -26,7 +26,7 @@
     },
     {
       "path": "/api/keep-alive",
-      "schedule": "0 9 */5 * *"
+      "schedule": "0 9 * * *"
     }
   ]
 }
