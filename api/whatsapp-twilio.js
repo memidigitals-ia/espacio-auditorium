@@ -574,8 +574,10 @@ export default async function handler(req, res) {
   try {
     const conv = await getConversation(phone)
 
-    // Registrar primer contacto en Sheets apenas llega el primer mensaje
-    if (conv.messages.length === 0) {
+    // Registrar en Sheets: contacto nuevo O reinicio de conversación
+    const isNewContact = conv.messages.length === 0
+    const isNewSession = ['qualified', 'closed'].includes(conv.status) && conv.messages.length > 0
+    if (isNewContact || isNewSession) {
       logFirstContact(phone, userText).catch(err => console.error('[sheets first-contact error]', err.message))
     }
     const messages = [...conv.messages, { role: 'user', content: userText }]
