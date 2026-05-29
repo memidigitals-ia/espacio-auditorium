@@ -185,18 +185,31 @@ function formatMessages(messages) {
     .slice(0, 1000)
 }
 
-async function logFirstContact(phone, firstMessage) {
+async function logFirstContact(phone) {
   const phoneClean = phone.replace('whatsapp:', '')
   try {
     const client = await getSheetsClient()
     if (!client) return
     const { sheets, sheetId } = client
+
+    // Verificar si el teléfono ya existe en la columna B
+    const existing = await sheets.spreadsheets.values.get({
+      spreadsheetId: sheetId,
+      range: 'Leads!B:B',
+    })
+    const phones = (existing.data.values || []).flat()
+    if (phones.includes(phoneClean)) {
+      console.log(`[sheets] contacto ya registrado: ${phoneClean}`)
+      return
+    }
+
+    // Insertar nueva fila solo con fecha y teléfono
     const now = new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })
     await sheets.spreadsheets.values.append({
       spreadsheetId: sheetId,
-      range: 'Leads!A:L',
+      range: 'Leads!A:B',
       valueInputOption: 'USER_ENTERED',
-      requestBody: { values: [[now, phoneClean, '', '', '', '', '', '', '', '', 'Primer contacto', firstMessage.slice(0, 500)]] },
+      requestBody: { values: [[now, phoneClean]] },
     })
     console.log(`[sheets] primer contacto registrado: ${phoneClean}`)
   } catch (err) {
@@ -375,7 +388,7 @@ export default async function handler(req, res) {
       const ld = { ...baseLeadData, derivacion_manual: 'si', sheet_logged: true }
       await saveConversation(phone, updated, { status: 'qualified', lead_data: ld })
       if (needsSheetLog) {
-        logFirstContact(phone, userText).catch(err => console.error('[sheets first-contact error]', err.message))
+        logFirstContact(phone).catch(err => console.error('[sheets first-contact error]', err.message))
       }
       res.setHeader('Content-Type', 'text/xml')
       return res.status(200).send(twiml(HUMAN_RESPONSE))
@@ -426,7 +439,7 @@ export default async function handler(req, res) {
 
     // Loguear primer contacto DESPUÉS de guardar (una sola vez por contacto)
     if (needsSheetLog) {
-      logFirstContact(phone, userText).catch(err => console.error('[sheets first-contact error]', err.message))
+      logFirstContact(phone).catch(err => console.error('[sheets first-contact error]', err.message))
     }
 
     res.setHeader('Content-Type', 'text/xml')
