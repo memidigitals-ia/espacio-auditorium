@@ -12,6 +12,19 @@ const TEAM = process.env.TEAM_WHATSAPP_TO      // ej: whatsapp:+5491138255877
 
 const SYSTEM_PROMPT = `Sos el agente de calificación de leads de Espacio Auditorium. Tu trabajo es filtrar, calificar y derivar. No vendés, no negociás, no confirmás disponibilidad.
 
+━━━ PROCESO OBLIGATORIO ANTES DE CADA RESPUESTA ━━━
+
+Antes de escribir cualquier respuesta, revisá el historial completo y extraé en silencio los datos ya provistos:
+- Fecha: ¿el usuario mencionó alguna fecha en algún mensaje anterior?
+- Cantidad: ¿mencionó cantidad de personas?
+- Tipo de evento: ¿mencionó capacitación, reunión, lanzamiento, etc.?
+- Nombre: ¿dijo su nombre?
+- Duración: ¿mencionó horas o media/jornada completa?
+
+Luego respondé SOLO pidiendo lo que todavía falta. NUNCA preguntes por algo que ya fue respondido en mensajes anteriores, aunque el usuario lo haya dicho de forma casual o en el mismo mensaje con otra cosa.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 Hacés 3 cosas:
 1. Respondés preguntas básicas usando los datos que tenés
 2. Recopilás los 4 datos clave del lead (fecha, cantidad, tipo de evento, nombre)
@@ -111,6 +124,13 @@ UBICACIÓN:
 ¿Querés coordinar una visita?"
 
 DISPONIBILIDAD:
+Si el sistema te dio [SISTEMA: disponibilidad verificada] para esa fecha, usá esa info:
+- LIBRE → "El [fecha] está disponible 🟢 Podés reservar directamente acá: https://www.espacioauditorium.com.ar/#reservar"
+- OCUPADO → "El [fecha] no está disponible. ¿Tenés otra fecha en mente? El equipo puede ayudarte a encontrar una alternativa."
+- MAÑANA_OCUPADA → "La mañana del [fecha] está tomada, pero la tarde está libre. ¿Te sirve la tarde?"
+- TARDE_OCUPADA → "La tarde del [fecha] está tomada, pero la mañana está libre. ¿Te sirve la mañana?"
+
+Si el sistema NO te dio info de disponibilidad, respondé:
 "Para chequear disponibilidad necesito:
 - Fecha
 - Cantidad de personas
@@ -142,10 +162,15 @@ RESERVA / SEÑA:
 Podés hacerlo directo desde la web: espacioauditorium.com.ar"
 
 VISITA / CONOCER EL ESPACIO:
-"Podemos coordinar una visita sin problema.
-Disponibles L-V de 9 a 19hs.
-¿Qué día y horario te queda mejor?"
-→ Si responde con día y horario: derivar.
+"Claro, podemos coordinar una visita presencial.
+Para confirmarla necesitás escribirle por WhatsApp a Sebastián, que es quien gestiona las visitas: https://wa.me/541136447803
+Él te va a dar disponibilidad y confirmar el día y horario 👍"
+
+Regla CRÍTICA para visitas:
+- NUNCA confirmés ni agendés una visita directamente.
+- SIEMPRE derivar al WhatsApp de Sebastián (https://wa.me/541136447803) como paso obligatorio.
+- Si el usuario insiste en que le des una fecha o la confirmes vos, recordale que la confirmación SOLO es válida cuando la hace Sebastián.
+- Sin ese paso, la visita NO está confirmada bajo ningún concepto.
 
 TÉCNICO / SOPORTE AUDIOVISUAL / STREAMING:
 "No está incluido, pero está disponible como servicio extra.
@@ -171,7 +196,14 @@ TÉCNICO / SOPORTE AUDIOVISUAL / STREAMING:
 
 ━━━ DATOS PARCIALES — CÓMO MANEJAR ━━━
 
-Regla: si el lead da datos parciales, respondé con la info que corresponde a lo que dio y pedí SOLO lo que falta. Nunca bloqueés la conversación por falta de un dato.
+Regla CRÍTICA: revisá TODOS los mensajes anteriores antes de preguntar algo. Si el dato ya fue dado en cualquier mensaje previo, NO lo pidas de nuevo.
+
+Ejemplos de errores que NO debés cometer:
+- El usuario dijo "para el 10 de junio" en el mensaje 1 → NO preguntes la fecha en el mensaje 3
+- El usuario dijo "20 personas" → NO preguntes "¿cuántas personas?" después
+- El usuario dijo "capacitación" → NO preguntes "¿qué tipo de evento?" después
+- El usuario dio su empresa → NO preguntes "¿de qué empresa sos?" después
+- El usuario dejó su email → NO lo pidas de nuevo
 
 Solo CANTIDAD (sin fecha ni tipo):
 Respondé con precios para esa cantidad y pedí fecha y tipo.
@@ -185,17 +217,29 @@ Pedí cantidad. Recordá que el máximo es 36 en auditorio.
 TODO (fecha + cantidad + tipo + duración):
 Respondé con precio + ubicación. Pedí nombre para derivar.
 
-NUNCA repetir datos que el lead ya dio.
+TODO (fecha + cantidad + tipo + nombre) sin empresa ni email:
+Respondé brevemente y pedí empresa y email juntos en un mensaje: "Antes de pasarte con el equipo, ¿me decís de qué empresa o institución sos y un mail de contacto?"
+
+NUNCA repetir datos que el lead ya dio en cualquier parte de la conversación.
 
 ━━━ CALIFICACIÓN — CUÁNDO DERIVAR ━━━
 
-4 datos obligatorios para derivar:
+Datos obligatorios para derivar (los 4 núcleo):
 1. Fecha del evento
 2. Cantidad de personas
 3. Tipo de evento
 4. Nombre del contacto
 
-Datos opcionales (capturar si surgen): empresa, email, duración preferida, horario preferido.
+Datos secundarios — pedirlos SIEMPRE antes de derivar si no los tenés:
+5. Empresa / organización (preguntá: "¿De qué empresa o institución sos?")
+6. Email de contacto (preguntá: "¿Me dejás un mail para que el equipo pueda enviarte la propuesta?")
+
+Datos opcionales (capturar si surgen naturalmente): duración preferida, horario preferido.
+
+Flujo de recolección:
+- Primero completá los 4 obligatorios (fecha, personas, tipo, nombre).
+- Una vez que los tenés, antes de derivar pedí empresa y email en un mismo mensaje corto.
+- Si el contacto no quiere dar empresa o email después de pedirlos una vez, derivá igual con lo que tenés.
 
 Derivar también si:
 - Pide reservar explícitamente
@@ -234,6 +278,7 @@ Para [cantidad] personas no es el espacio indicado.
 - Inventar servicios que no existen
 - Derivar sin los 4 datos obligatorios (salvo excepciones listadas arriba)
 - Repetir datos que el lead ya dio
+- Confirmar ni agendar visitas presenciales: siempre derivar al WhatsApp de Sebastián (https://wa.me/541136447803), sin ese paso la visita no existe
 - Insistir si el lead no responde
 - Usar más de 2 emojis por mensaje
 - Prolongar conversaciones sin rumbo
@@ -322,42 +367,166 @@ function formatTeamMsg(lead, phone) {
 
 // ─── Google Sheets ───────────────────────────────────────────────────────────
 
-async function appendLeadToSheet(lead, phone) {
-  const sheetId = process.env.GOOGLE_LEADS_SHEET_ID
-  if (!sheetId) return
+const firstContactLogged = new Set()
+
+async function getSheetsClient() {
+  const sheetId = (process.env.GOOGLE_LEADS_SHEET_ID || '').trim()
+  if (!sheetId) return null
+  const saJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON
+  const credentials = saJson && saJson.trim().startsWith('{')
+    ? JSON.parse(saJson)
+    : {
+        type: 'service_account',
+        client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+        private_key: (process.env.GOOGLE_SERVICE_ACCOUNT_KEY || '').replace(/\\n/g, '\n'),
+      }
+  const auth = new google.auth.GoogleAuth({ credentials, scopes: ['https://www.googleapis.com/auth/spreadsheets'] })
+  const sheets = google.sheets({ version: 'v4', auth })
+  return { sheets, sheetId }
+}
+
+function formatMessages(messages) {
+  return messages
+    .filter(m => m.role === 'user' || m.role === 'assistant')
+    .map(m => `[${m.role === 'user' ? 'Cliente' : 'Agente'}] ${(m.content || '').slice(0, 200)}`)
+    .join(' | ')
+    .slice(0, 1000)
+}
+
+async function logFirstContact(phone, firstMessage) {
+  const phoneClean = phone.replace('whatsapp:', '')
+  if (firstContactLogged.has(phoneClean)) return
+  firstContactLogged.add(phoneClean)
 
   try {
-    const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON || process.env.GOOGLE_SERVICE_ACCOUNT_KEY)
-    const auth = new google.auth.GoogleAuth({
-      credentials: serviceAccount,
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    const client = await getSheetsClient()
+    if (!client) return
+    const { sheets, sheetId } = client
+    const now = new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: sheetId,
+      range: 'Leads!A:L',
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: [[now, phoneClean, '', '', '', '', '', '', '', '', 'Primer contacto', firstMessage.slice(0, 500)]] },
     })
-    const sheets = google.sheets({ version: 'v4', auth })
+    console.log(`[sheets] primer contacto registrado: ${phoneClean}`)
+  } catch (err) {
+    console.error('[sheets first-contact error]', err.message)
+  }
+}
 
+async function appendLeadToSheet(lead, phone, messages = []) {
+  try {
+    const client = await getSheetsClient()
+    if (!client) return
+    const { sheets, sheetId } = client
     const now = new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })
     const row = [
       now,
       phone.replace('whatsapp:', ''),
-      lead.nombre  || '',
-      lead.empresa || '',
-      lead.email   || '',
-      lead.fecha   || '',
+      lead.nombre   || '',
+      lead.empresa  || '',
+      lead.email    || '',
+      lead.fecha    || '',
       lead.personas || '',
-      lead.tipo    || '',
+      lead.tipo     || '',
       lead.duracion || '',
       lead.urgencia || '',
-      lead.notas   || '',
+      lead.notas    || '',
+      formatMessages(messages),
     ]
-
     await sheets.spreadsheets.values.append({
       spreadsheetId: sheetId,
-      range: 'Leads!A:K',
+      range: 'Leads!A:L',
       valueInputOption: 'USER_ENTERED',
       requestBody: { values: [row] },
     })
+    console.log(`[sheets] lead calificado guardado: ${phone}`)
   } catch (err) {
     console.error('[sheets error]', err.message)
   }
+}
+
+// ─── Availability check ──────────────────────────────────────────────────────
+
+const MESES = { enero:1, febrero:2, marzo:3, abril:4, mayo:5, junio:6, julio:7, agosto:8, septiembre:9, octubre:10, noviembre:11, diciembre:12 }
+
+function extractDate(text) {
+  const t = text.toLowerCase()
+  // "10 de junio" / "10 de junio de 2026"
+  const m1 = t.match(/(\d{1,2})\s+de\s+([a-záéíóú]+)(?:\s+de\s+(\d{4}))?/)
+  if (m1) {
+    const day = parseInt(m1[1])
+    const month = MESES[m1[2]]
+    if (!month) return null
+    const year = m1[3] ? parseInt(m1[3]) : new Date().getFullYear()
+    const d = new Date(year, month - 1, day)
+    if (d < new Date()) d.setFullYear(d.getFullYear() + 1)
+    return d.toISOString().split('T')[0]
+  }
+  // "10/06" / "10/06/2026"
+  const m2 = t.match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?/)
+  if (m2) {
+    const day = parseInt(m2[1]), month = parseInt(m2[2])
+    const year = m2[3] ? parseInt(m2[3]) : new Date().getFullYear()
+    const d = new Date(year, month - 1, day)
+    if (d < new Date()) d.setFullYear(d.getFullYear() + 1)
+    return d.toISOString().split('T')[0]
+  }
+  return null
+}
+
+async function checkAvailability(dateStr) {
+  // Query Supabase reservations
+  const { data: reservations } = await supabase
+    .from('reservations')
+    .select('slot_type, status')
+    .eq('start_date', dateStr)
+    .in('status', ['pending_payment', 'deposit_paid', 'paid'])
+
+  // Query Google Calendar blocked dates
+  let gcalBlocked = []
+  try {
+    const saEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL
+    const saKey   = (process.env.GOOGLE_SERVICE_ACCOUNT_KEY || '').replace(/\\n/g, '\n')
+    if (saEmail && saKey) {
+      const auth = new google.auth.GoogleAuth({
+        credentials: { type: 'service_account', client_email: saEmail, private_key: saKey },
+        scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
+      })
+      const cal = google.calendar({ version: 'v3', auth })
+      const dayStart = new Date(dateStr + 'T00:00:00-03:00').toISOString()
+      const dayEnd   = new Date(dateStr + 'T23:59:59-03:00').toISOString()
+      const resp = await cal.events.list({
+        calendarId: process.env.GOOGLE_CALENDAR_ID,
+        timeMin: dayStart, timeMax: dayEnd,
+        singleEvents: true,
+      })
+      gcalBlocked = (resp.data.items || []).filter(e =>
+        !e.description?.includes('Reserva #') && !e.summary?.includes('[RESERVA]')
+      )
+    }
+  } catch {}
+
+  const activeReservations = reservations || []
+  const hasFullDay   = activeReservations.some(r => r.slot_type === 'full_day') || gcalBlocked.some(e => e.start?.date)
+  const hasMorning   = activeReservations.some(r => r.slot_type === 'half_day_morning')
+  const hasAfternoon = activeReservations.some(r => r.slot_type === 'half_day_afternoon')
+
+  if (hasFullDay || (hasMorning && hasAfternoon)) return 'ocupado'
+  if (hasMorning)   return 'mañana_ocupada'
+  if (hasAfternoon) return 'tarde_ocupada'
+  return 'libre'
+}
+
+function availabilityNote(dateStr, status) {
+  const [y, m, d] = dateStr.split('-')
+  const label = `${d}/${m}/${y}`
+  const bookUrl = 'https://www.espacioauditorium.com.ar/#reservar'
+  if (status === 'libre')           return `[SISTEMA: disponibilidad verificada para ${label} → LIBRE. Decile que está disponible y envialo a reservar: ${bookUrl}]`
+  if (status === 'mañana_ocupada')  return `[SISTEMA: disponibilidad verificada para ${label} → mañana ocupada, tarde libre. Podés ofrecerle la tarde o derivar.]`
+  if (status === 'tarde_ocupada')   return `[SISTEMA: disponibilidad verificada para ${label} → tarde ocupada, mañana libre. Podés ofrecerle la mañana o derivar.]`
+  return `[SISTEMA: disponibilidad verificada para ${label} → OCUPADO. No está disponible.]`
 }
 
 // ─── Supabase ────────────────────────────────────────────────────────────────
@@ -404,6 +573,11 @@ export default async function handler(req, res) {
 
   try {
     const conv = await getConversation(phone)
+
+    // Registrar primer contacto en Sheets apenas llega el primer mensaje
+    if (conv.messages.length === 0) {
+      logFirstContact(phone, userText).catch(err => console.error('[sheets first-contact error]', err.message))
+    }
     const messages = [...conv.messages, { role: 'user', content: userText }]
 
     // Derivación inmediata sin pasar por AI
@@ -414,10 +588,24 @@ export default async function handler(req, res) {
       return res.status(200).send(twiml(HUMAN_RESPONSE))
     }
 
+    // Check availability for any date mentioned in current or past messages
+    let systemPrompt = SYSTEM_PROMPT
+    const allText = messages.map(m => m.content).join(' ')
+    const mentionedDate = extractDate(userText) || extractDate(allText)
+    if (mentionedDate) {
+      try {
+        const avail = await checkAvailability(mentionedDate)
+        systemPrompt = SYSTEM_PROMPT + '\n\n' + availabilityNote(mentionedDate, avail)
+        console.log(`[availability] ${mentionedDate} → ${avail}`)
+      } catch (e) {
+        console.error('[availability error]', e.message)
+      }
+    }
+
     const aiResponse = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 600,
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       messages,
     })
 
@@ -435,7 +623,7 @@ export default async function handler(req, res) {
           .create({ from: FROM, to: TEAM, body: formatTeamMsg(lead, phone) })
           .catch(err => console.error('[team notify error]', err.message))
       }
-      appendLeadToSheet(lead, phone).catch(err => console.error('[sheets error]', err.message))
+      appendLeadToSheet(lead, phone, updated).catch(err => console.error('[sheets error]', err.message))
     } else if (action === 'close') {
       await saveConversation(phone, updated, { status: 'closed' })
     } else {
