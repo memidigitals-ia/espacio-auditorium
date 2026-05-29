@@ -367,8 +367,6 @@ function formatTeamMsg(lead, phone) {
 
 // ─── Google Sheets ───────────────────────────────────────────────────────────
 
-const firstContactLogged = new Set()
-
 async function getSheetsClient() {
   const sheetId = (process.env.GOOGLE_LEADS_SHEET_ID || '').trim()
   if (!sheetId) return null
@@ -395,9 +393,6 @@ function formatMessages(messages) {
 
 async function logFirstContact(phone, firstMessage) {
   const phoneClean = phone.replace('whatsapp:', '')
-  if (firstContactLogged.has(phoneClean)) return
-  firstContactLogged.add(phoneClean)
-
   try {
     const client = await getSheetsClient()
     if (!client) return
@@ -574,11 +569,12 @@ export default async function handler(req, res) {
   try {
     const conv = await getConversation(phone)
 
-    // Registrar en Sheets: contacto nuevo O reinicio de conversación
-    const isNewContact = conv.messages.length === 0
-    const isNewSession = ['qualified', 'closed'].includes(conv.status) && conv.messages.length > 0
-    if (isNewContact || isNewSession) {
+    // Registrar en Sheets la primera vez que escribe (persistido en Supabase)
+    if (!conv.lead_data?.sheet_logged) {
       logFirstContact(phone, userText).catch(err => console.error('[sheets first-contact error]', err.message))
+      saveConversation(phone, conv.messages, {
+        lead_data: { ...(conv.lead_data || {}), sheet_logged: true }
+      }).catch(() => {})
     }
     const messages = [...conv.messages, { role: 'user', content: userText }]
 
