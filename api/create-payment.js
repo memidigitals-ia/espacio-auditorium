@@ -15,8 +15,13 @@ export default async function handler(req, res) {
     const {
       startDate, endDate, durationType, slotType, additionalHours, days,
       pricing, firstName, lastName, email, whatsapp, eventType, notes,
-      policyAccepted, policyAcceptedAt,
+      policyAccepted, policyAcceptedAt, coupon,
     } = req.body
+
+    // Validate coupon server-side
+    const COUPONS = JSON.parse(process.env.COUPON_CODES || '{}')
+    const couponCode = (coupon || '').trim().toUpperCase()
+    const couponDiscount = COUPONS[couponCode] || 0 // percentage 0-100
 
     // Validate required fields
     if (!startDate || !durationType || !email || !firstName || !lastName || !policyAccepted) {
@@ -27,8 +32,9 @@ export default async function handler(req, res) {
     const { data: conflicts, error: availError } = await supabase
       .from('reservations')
       .select('id')
-      .in('status', ['pending_payment', 'deposit_paid', 'confirmed'])
-      .or(`start_date.lte.${endDate || startDate},end_date.gte.${startDate}`)
+      .in('status', ['deposit_paid', 'confirmed'])
+      .lte('start_date', endDate || startDate)
+      .gte('end_date', startDate)
       .eq('slot_type', slotType)
 
     if (availError) throw availError
@@ -82,7 +88,7 @@ export default async function handler(req, res) {
             title: `Seña - Espacio Auditorium`,
             description: `${durationType === 'half_day' ? 'Media jornada' : 'Jornada completa'} · ${startDate}${endDate && endDate !== startDate ? ` → ${endDate}` : ''} · ${eventType}`,
             quantity: 1,
-            unit_price: Math.round(pricing.deposit),
+            unit_price: Math.max(1, Math.round(pricing.deposit * (1 - couponDiscount / 100))),
             currency_id: 'ARS',
           },
         ],

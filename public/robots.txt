@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 
-Sitemap: https://espacioauditorium.com.ar/sitemap.xml
+Sitemap: https://www.espacioauditorium.com.ar/sitemap.xml

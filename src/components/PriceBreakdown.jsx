@@ -7,7 +7,7 @@ export default function PriceBreakdown({ durationType, days, additionalHours = 0
 
   return (
     <div className="card card-gold" style={{ fontSize: '0.9rem' }}>
-      <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', marginBottom: '1rem' }}>
+      <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--app-text)' }}>
         Resumen de precios
       </h3>
 
@@ -65,7 +65,7 @@ export default function PriceBreakdown({ durationType, days, additionalHours = 0
         }}
       >
         <div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--app-muted)', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Seña (30%) — hoy
           </div>
           <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', color: 'var(--gold)', fontWeight: 700 }}>
@@ -73,10 +73,10 @@ export default function PriceBreakdown({ durationType, days, additionalHours = 0
           </div>
         </div>
         <div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--app-muted)', marginBottom: '0.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Saldo — 5 días antes
           </div>
-          <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', color: 'var(--text)', fontWeight: 600 }}>
+          <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', color: 'var(--app-text)', fontWeight: 600 }}>
             {formatARS(p.balance)}
           </div>
         </div>
@@ -101,11 +101,11 @@ function Row({ label, value, bold, highlight }) {
         padding: '0.2rem 0',
         fontWeight: bold ? 700 : 400,
         fontSize: bold ? '1rem' : 'inherit',
-        color: highlight === 'discount' ? '#81c784' : bold ? 'var(--text)' : 'var(--text-muted)',
+        color: highlight === 'discount' ? '#81c784' : bold ? 'var(--app-text)' : 'var(--app-muted)',
       }}
     >
       <span>{label}</span>
-      <span style={{ color: highlight === 'discount' ? '#81c784' : bold ? 'var(--gold)' : 'inherit' }}>
+      <span style={{ color: highlight === 'discount' ? '#81c784' : bold ? 'var(--gold)' : 'var(--app-muted)' }}>
         {value}
       </span>
     </div>

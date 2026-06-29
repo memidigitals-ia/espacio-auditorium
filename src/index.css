@@ -173,11 +173,13 @@ input, select, textarea { font-family: var(--font-sans); }
   position: fixed; bottom: 32px; right: 32px; z-index: 100;
   width: 56px; height: 56px; background: #25D366; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
   box-shadow: 0 4px 20px rgba(37,211,102,0.4); text-decoration: none;
   transition: transform 0.2s, box-shadow 0.2s; border: none;
 }
 .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.5); }
-.whatsapp-float svg { width: 28px; height: 28px; fill: white; }
+.whatsapp-float svg { width: 28px; height: 28px; fill: white; flex-shrink: 0; }
+.whatsapp-float .label { display: none; }
 
 /* Section tag (landing) */
 .section-tag {

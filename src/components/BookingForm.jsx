@@ -121,6 +121,18 @@ export default function BookingForm({ onSubmit, isLoading }) {
         )}
       </div>
 
+      <div className="form-group" style={{ marginTop: '0.5rem' }}>
+        <label className="form-label" htmlFor="coupon">Código de descuento (opcional)</label>
+        <input
+          id="coupon"
+          className="form-input"
+          placeholder="Ingresá tu código"
+          style={{ textTransform: 'uppercase' }}
+          {...register('coupon')}
+          onChange={e => e.target.value = e.target.value.toUpperCase()}
+        />
+      </div>
+
       <button
         type="submit"
         className="btn btn-gold btn-lg btn-full"

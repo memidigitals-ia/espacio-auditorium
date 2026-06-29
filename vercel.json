@@ -2,8 +2,22 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "espacioauditorium.com.ar" }],
+      "destination": "https://www.espacioauditorium.com.ar/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/api/reservations/:id", "destination": "/api/reservations/[id]" },
+    { "source": "/salas", "destination": "/salas/index.html" },
+    { "source": "/cotizar", "destination": "/cotizar/index.html" },
+    { "source": "/conferencias", "destination": "/conferencias/index.html" },
+    { "source": "/capacitaciones", "destination": "/capacitaciones/index.html" },
+    { "source": "/podcast-y-streaming", "destination": "/podcast-y-streaming/index.html" },
+    { "source": "/lanzamientos", "destination": "/lanzamientos/index.html" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "functions": {
