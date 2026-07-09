@@ -11,6 +11,14 @@ export default function ConferenciasPage() {
         <meta property="og:title" content="Sala para Conferencias y Charlas | Espacio Auditorium Recoleta" />
         <meta property="og:description" content="Auditorio para conferencias de hasta 36 personas en Recoleta, CABA. Proyector HDMI, butacas, acústica profesional. Reserva online." />
         <meta property="og:url" content="https://www.espacioauditorium.com.ar/conferencias" />
+        <meta property="og:image" content="https://www.espacioauditorium.com.ar/salagaudi.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Sala Gaudi - Auditorio Espacio Auditorium, Recoleta Buenos Aires" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Sala para Conferencias y Charlas | Espacio Auditorium Recoleta" />
+        <meta name="twitter:description" content="Auditorio para conferencias de hasta 36 personas en Recoleta, CABA. Proyector HDMI, butacas, acústica profesional. Reserva online." />
+        <meta name="twitter:image" content="https://www.espacioauditorium.com.ar/salagaudi.jpg" />
       </Helmet>
 
       {/* Hero */}

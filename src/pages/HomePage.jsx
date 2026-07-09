@@ -81,6 +81,14 @@ export default function HomePage() {
         <meta property="og:title" content="Alquiler de Auditorio en Recoleta, CABA | Espacio Auditorium" />
         <meta property="og:description" content="Auditorio para 36 personas y 3 salas en Recoleta, CABA. Conferencias, capacitaciones y streaming. Reserva online con precio instantáneo." />
         <meta property="og:url" content="https://www.espacioauditorium.com.ar/" />
+        <meta property="og:image" content="https://www.espacioauditorium.com.ar/salagaudi.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Sala Gaudi - Auditorio Espacio Auditorium, Recoleta Buenos Aires" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Alquiler de Auditorio en Recoleta, CABA | Espacio Auditorium" />
+        <meta name="twitter:description" content="Auditorio para 36 personas y 3 salas en Recoleta, CABA. Conferencias, capacitaciones y streaming. Reserva online con precio instantáneo." />
+        <meta name="twitter:image" content="https://www.espacioauditorium.com.ar/salagaudi.jpg" />
       </Helmet>
       {/* NAV */}
       <nav className="site-nav" style={{

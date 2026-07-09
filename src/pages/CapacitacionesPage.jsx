@@ -11,6 +11,14 @@ export default function CapacitacionesPage() {
         <meta property="og:title" content="Sala para Capacitaciones y Workshops | Espacio Auditorium Recoleta" />
         <meta property="og:description" content="Espacio para capacitaciones de hasta 36 personas en Recoleta. Piso completo con 3 salas, proyector, TV y WiFi. Reserva online." />
         <meta property="og:url" content="https://www.espacioauditorium.com.ar/capacitaciones" />
+        <meta property="og:image" content="https://www.espacioauditorium.com.ar/salagaudi.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Sala Gaudi - Auditorio Espacio Auditorium, Recoleta Buenos Aires" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Sala para Capacitaciones y Workshops | Espacio Auditorium Recoleta" />
+        <meta name="twitter:description" content="Espacio para capacitaciones de hasta 36 personas en Recoleta. Piso completo con 3 salas, proyector, TV y WiFi. Reserva online." />
+        <meta name="twitter:image" content="https://www.espacioauditorium.com.ar/salagaudi.jpg" />
       </Helmet>
 
       {/* Hero */}

@@ -35,6 +35,14 @@ export default function SalasPage() {
         <meta property="og:title" content="Salas Gaudi, Pollock y Miró | Espacio Auditorium Recoleta" />
         <meta property="og:description" content="Piso completo con 3 salas (36, 12 y 15 personas) por un único precio. Proyector, TV, acústica profesional. Recoleta, CABA." />
         <meta property="og:url" content="https://www.espacioauditorium.com.ar/salas" />
+        <meta property="og:image" content="https://www.espacioauditorium.com.ar/salagaudi.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Sala Gaudi - Auditorio Espacio Auditorium, Recoleta Buenos Aires" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Salas Gaudi, Pollock y Miró | Espacio Auditorium Recoleta" />
+        <meta name="twitter:description" content="Piso completo con 3 salas (36, 12 y 15 personas) por un único precio. Proyector, TV, acústica profesional. Recoleta, CABA." />
+        <meta name="twitter:image" content="https://www.espacioauditorium.com.ar/salagaudi.jpg" />
       </Helmet>
 
       {/* Hero */}

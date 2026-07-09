@@ -11,6 +11,14 @@ export default function LanzamientosPage() {
         <meta property="og:title" content="Venue para Lanzamientos en Recoleta, CABA | Espacio Auditorium" />
         <meta property="og:description" content="Venue boutique para lanzamientos de productos, programas y servicios. Hasta 36 personas, exclusividad total, streaming disponible. Recoleta, CABA." />
         <meta property="og:url" content="https://www.espacioauditorium.com.ar/lanzamientos" />
+        <meta property="og:image" content="https://www.espacioauditorium.com.ar/salagaudi.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Sala Gaudi - Auditorio Espacio Auditorium, Recoleta Buenos Aires" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Venue para Lanzamientos en Recoleta, CABA | Espacio Auditorium" />
+        <meta name="twitter:description" content="Venue boutique para lanzamientos de productos, programas y servicios. Hasta 36 personas, exclusividad total, streaming disponible. Recoleta, CABA." />
+        <meta name="twitter:image" content="https://www.espacioauditorium.com.ar/salagaudi.jpg" />
       </Helmet>
 
       {/* Hero */}

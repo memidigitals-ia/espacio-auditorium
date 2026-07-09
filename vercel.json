@@ -8,6 +8,16 @@
       "has": [{ "type": "host", "value": "espacioauditorium.com.ar" }],
       "destination": "https://www.espacioauditorium.com.ar/:path*",
       "permanent": true
+    },
+    {
+      "source": "/salas-conferencias-eventos-profesionales-buenos-aires",
+      "destination": "/salas",
+      "permanent": true
+    },
+    {
+      "source": "/salas-conferencias-eventos-profesionales-buenos-aires/",
+      "destination": "/salas",
+      "permanent": true
     }
   ],
   "rewrites": [
