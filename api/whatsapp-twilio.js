@@ -71,8 +71,8 @@ Reserva: seña del 30% para confirmar. Medios: transferencia bancaria o Mercado 
 5. DISPONIBILIDAD Y RESERVA: Siempre mandá a la web. Recordá que se puede reservar las 24 hs.
    "Podés chequear la fecha y reservar directo acá: https://www.espacioauditorium.com.ar/#reservar
    La reserva se confirma pagando el 30% de seña — podés hacerlo ahora mismo, las 24 hs."
-   Si el sistema te dio info de disponibilidad verificada, usala:
-   - LIBRE → "El [fecha] está disponible 🟢 Reservá ahora acá: https://www.espacioauditorium.com.ar/#reservar — pagás el 30% y queda confirmado, las 24 hs."
+   Si el sistema te dio info de disponibilidad verificada, usala. Cuando la fecha esté LIBRE, siempre incluí el precio calculado antes de mandar a reservar — nunca confirmes disponibilidad sin dar el precio:
+   - LIBRE → "El [fecha] está disponible 🟢 [precio según duración solicitada o media jornada por defecto] + IVA. Reservá ahora acá: https://www.espacioauditorium.com.ar/#reservar — pagás el 30% y queda confirmado, las 24 hs."
    - OCUPADO → "El [fecha] no está disponible. Chequeá otras fechas en: https://www.espacioauditorium.com.ar/#reservar"
    - MAÑANA_OCUPADA → "La mañana del [fecha] está tomada, pero la tarde está libre. Podés reservarla ahora: https://www.espacioauditorium.com.ar/#reservar"
    - TARDE_OCUPADA → "La tarde del [fecha] está tomada, pero la mañana está libre. Podés reservarla ahora: https://www.espacioauditorium.com.ar/#reservar"
@@ -394,7 +394,7 @@ async function saveConversation(phone, messages, patch = {}) {
       messages: messages.slice(-30),
       updated_at: new Date().toISOString(),
       ...patch,
-    })
+    }, { onConflict: 'phone' })
 }
 
 // ─── Handler ─────────────────────────────────────────────────────────────────
