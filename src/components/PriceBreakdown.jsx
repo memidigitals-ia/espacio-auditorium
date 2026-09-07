@@ -1,4 +1,4 @@
-import { calculatePrice, formatARS, PRICES, DURATION_LABELS } from '../lib/pricing'
+import { calculatePrice, formatARS, DURATION_LABELS } from '../lib/pricing'
 
 export default function PriceBreakdown({ durationType, days, additionalHours = 0 }) {
   if (!durationType || !days) return null

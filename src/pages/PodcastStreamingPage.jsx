@@ -115,7 +115,7 @@ export default function PodcastStreamingPage() {
             ].map(r => (
               <div key={r.author} style={{ background: 'white', border: '1px solid var(--gray-light)', padding: '32px 28px', textAlign: 'left' }}>
                 <span style={{ color: 'var(--gold)', fontSize: 14, letterSpacing: 2, marginBottom: 16, display: 'block' }}>★★★★★</span>
-                <p style={{ fontSize: 14, color: '#666', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', marginBottom: 20 }}>"{r.text}"</p>
+                <p style={{ fontSize: 14, color: '#666', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', marginBottom: 20 }}>&ldquo;{r.text}&rdquo;</p>
                 <span style={{ fontSize: 12, fontWeight: 500, color: '#999', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{r.author}</span>
               </div>
             ))}

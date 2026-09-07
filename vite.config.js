@@ -17,7 +17,6 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           datepicker: ['react-day-picker', 'date-fns'],
-          supabase: ['@supabase/supabase-js'],
         },
       },
     },

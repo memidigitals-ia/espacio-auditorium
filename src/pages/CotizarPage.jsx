@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 import Layout from '../components/Layout'
+import { CANCELLATION_POLICY } from '../lib/pricing'
 
 export default function CotizarPage() {
   return (
@@ -63,9 +64,9 @@ export default function CotizarPage() {
                 { label: 'Jornada completa', desc: '8 horas · el día entero' },
                 { label: 'Jornada + extensión', desc: 'Hasta 12 horas en un solo día' },
                 { label: '2 días completos', desc: 'Para eventos que se extienden' },
-                { label: '3 días completos', desc: 'Formaciones o congresses' },
+                { label: '3 días completos', desc: 'Formaciones o congresos' },
                 { label: '4+ días  🔥 -15%', desc: 'Con 15% de descuento automático' },
-              ].map((opt, i) => (
+              ].map((opt) => (
                 <div key={opt.label} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   padding: '18px 0', borderBottom: '1px solid var(--gray-light)',
@@ -110,7 +111,7 @@ export default function CotizarPage() {
           {[
             { titulo: 'Seña del 30%', texto: 'Con el 30% del total reservás la fecha y el precio queda congelado. Se abona por Mercado Pago (tarjeta, transferencia o débito).' },
             { titulo: 'Saldo 5 días antes', texto: 'El 70% restante se abona hasta 5 días antes del evento. Sin sorpresas ni costos adicionales.' },
-            { titulo: 'Cancelación', texto: 'La seña no es reembolsable pero podés reprogramar con 7+ días de anticipación. El saldo (70%) es 100% reembolsable si cancelás antes de los 5 días.' },
+            { titulo: 'Cancelación', texto: CANCELLATION_POLICY },
           ].map(c => (
             <div key={c.titulo} style={{ padding: '48px 40px', background: 'white', border: '1px solid var(--gray-light)' }}>
               <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: 22, fontWeight: 400, color: 'var(--black)', marginBottom: 16 }}>{c.titulo}</h3>

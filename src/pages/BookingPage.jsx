@@ -1,134 +1,221 @@
-import { useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { format, parseISO, addDays } from 'date-fns'
+import { Helmet } from 'react-helmet-async'
+import { format, parseISO, addDays, addMonths, isValid, startOfToday } from 'date-fns'
 import { es } from 'date-fns/locale'
+import toast from 'react-hot-toast'
 import BookingCalendar from '../components/BookingCalendar'
 import BookingForm from '../components/BookingForm'
 import PriceBreakdown from '../components/PriceBreakdown'
 import WhatsAppButton from '../components/WhatsAppButton'
 import { useAvailability } from '../hooks/useAvailability'
-import { calculatePrice, getDaysCount, DURATION_LABELS, TIME_SLOTS } from '../lib/pricing'
-import axios from 'axios'
-import toast from 'react-hot-toast'
+import { calculatePrice, getDaysCount, formatARS, DURATION_LABELS, TIME_SLOTS, PRICES, LIMITS, DURATION_TYPES, SLOT_TYPES } from '../lib/pricing'
 
-const STEPS = ['Fechas', 'Detalles', 'Pago']
+const STEPS = ['Fechas', 'Datos', 'Pago']
+const GENERIC_ERROR = 'No pudimos procesar la reserva. Intentá de nuevo en unos minutos.'
+
+/** Sanitiza los query params del cotizador: nunca confiamos en la URL. */
+function parseQuery(searchParams) {
+  const today = startOfToday()
+  const minDate = addDays(today, LIMITS.minDaysAhead)
+  const maxDate = addMonths(today, LIMITS.maxMonthsAhead)
+
+  const durationRaw = searchParams.get('duration')
+  const durationType = DURATION_TYPES.includes(durationRaw) ? durationRaw : 'full_day'
+
+  const slotRaw = searchParams.get('slot')
+  let slotType = durationType === 'full_day' ? 'full_day' : 'half_day_morning'
+  if (durationType === 'half_day' && SLOT_TYPES.includes(slotRaw) && slotRaw !== 'full_day') slotType = slotRaw
+
+  const hoursRaw = Number.parseInt(searchParams.get('hours') || '0', 10)
+  const additionalHours = Number.isInteger(hoursRaw) ? Math.min(LIMITS.maxAdditionalHours, Math.max(0, hoursRaw)) : 0
+
+  const daysRaw = Number.parseInt(searchParams.get('days') || '1', 10)
+  const days = Number.isInteger(daysRaw) ? Math.min(LIMITS.maxDays, Math.max(1, daysRaw)) : 1
+
+  let range = { from: undefined, to: undefined }
+  const fromRaw = searchParams.get('from') || ''
+  if (/^\d{4}-\d{2}-\d{2}$/.test(fromRaw)) {
+    const from = parseISO(fromRaw)
+    if (isValid(from) && from >= minDate && from <= maxDate) {
+      range = { from, to: days > 1 ? addDays(from, days - 1) : undefined }
+    }
+  }
+
+  const personasRaw = Number.parseInt(searchParams.get('personas') || '', 10)
+  const personas = Number.isInteger(personasRaw) && personasRaw > 0 && personasRaw <= 500 ? personasRaw : null
+
+  return { durationType, slotType, additionalHours, range, personas }
+}
 
 export default function BookingPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-
-  // Pre-load from cotizador params
-  const initFrom = searchParams.get('from')
-  const initDuration = searchParams.get('duration') || 'full_day'
-  const initSlot = searchParams.get('slot') || (initDuration === 'half_day' ? 'half_day_morning' : 'full_day')
-  const initHours = parseInt(searchParams.get('hours') || '0')
-  const initDays = parseInt(searchParams.get('days') || '1')
-
-  const getInitDateRange = () => {
-    if (!initFrom) return { from: undefined, to: undefined }
-    const from = parseISO(initFrom)
-    const to = initDays > 1 ? addDays(from, initDays - 1) : undefined
-    return { from, to }
-  }
+  const init = useMemo(() => parseQuery(searchParams), [searchParams])
 
   const [step, setStep] = useState(0)
-  const [durationType, setDurationType] = useState(initDuration)
-  const [slotType, setSlotType] = useState(initSlot)
-  const [additionalHours, setAdditionalHours] = useState(initHours)
-  const [dateRange, setDateRange] = useState(getInitDateRange)
+  const [durationType, setDurationType] = useState(init.durationType)
+  const [slotType, setSlotType] = useState(init.slotType)
+  const [additionalHours, setAdditionalHours] = useState(init.additionalHours)
+  const [dateRange, setDateRange] = useState(init.range)
   const [isLoading, setIsLoading] = useState(false)
-  const [paymentError, setPaymentError] = useState(null)
+  const [paymentError, setPaymentError] = useState(null)   // { title, message, action? }
+  const [serverFieldError, setServerFieldError] = useState(null)
+  const [turnstileReset, setTurnstileReset] = useState(0)
+  const submittingRef = useRef(false)
 
-  const { isRangeAvailable, isDateBlocked, loading: availabilityLoading } = useAvailability()
+  const { isRangeAvailable, isDateBlocked, loading: availabilityLoading, error: availabilityError, refresh } = useAvailability()
 
-  const days = getDaysCount(dateRange?.from, dateRange?.to)
+  const days = getDaysCount(dateRange?.from, dateRange?.to || dateRange?.from)
   const pricing = durationType ? calculatePrice({ durationType, days, additionalHours }) : null
 
-  // Sync slotType with durationType
   const handleDurationChange = (type) => {
     setDurationType(type)
-    if (type === 'full_day') setSlotType('full_day')
-    else setSlotType('half_day_morning')
+    setSlotType(type === 'full_day' ? 'full_day' : 'half_day_morning')
   }
 
-  const handleDateSelect = (range) => {
+  const handleRangeChange = useCallback((range) => {
     setDateRange(range || { from: undefined, to: undefined })
-  }
+  }, [])
 
-  const handleCalendarRangeChange = (range) => {
-    setDateRange(range || { from: undefined, to: undefined })
-  }
+  const selectedBlocked = Boolean(dateRange?.from) && !isRangeAvailable(dateRange.from, dateRange.to || dateRange.from, slotType)
+  const canContinue = Boolean(dateRange?.from) && !selectedBlocked && !availabilityError && !availabilityLoading
 
   const handleContinueToForm = () => {
     if (!dateRange?.from) {
       toast.error('Seleccioná al menos una fecha')
       return
     }
-    // Verify range is still available
-    if (!isRangeAvailable(dateRange.from, dateRange.to || dateRange.from, slotType)) {
-      toast.error('Una o más fechas del rango ya no están disponibles. Por favor elegí otras fechas.')
+    if (availabilityError) {
+      toast.error('No pudimos verificar la disponibilidad. Reintentá en unos segundos.')
       return
     }
+    if (selectedBlocked) {
+      toast.error('Una o más fechas del rango ya no están disponibles. Elegí otras fechas.')
+      return
+    }
+    setPaymentError(null)
+    setServerFieldError(null)
     setStep(1)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  const goBackToDates = () => {
+    setPaymentError(null)
+    setServerFieldError(null)
+    setStep(0)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const handleFormSubmit = async (formData) => {
+    if (submittingRef.current) return   // bloqueo de doble envío
+    submittingRef.current = true
     setIsLoading(true)
     setPaymentError(null)
+    setServerFieldError(null)
 
+    let redirecting = false
     try {
       const payload = {
-        // Booking details
         startDate: format(dateRange.from, 'yyyy-MM-dd'),
         endDate: format(dateRange.to || dateRange.from, 'yyyy-MM-dd'),
         durationType,
         slotType,
         additionalHours,
-        days,
-        // Pricing
-        pricing,
-        // Client data
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         whatsapp: formData.whatsapp,
         eventType: formData.eventType,
         notes: formData.notes || '',
-        policyAccepted: formData.policyAccepted,
-        policyAcceptedAt: new Date().toISOString(),
+        policyAccepted: formData.policyAccepted === true,
         coupon: formData.coupon || '',
+        turnstileToken: formData.turnstileToken || '',
       }
 
-      const { data } = await axios.post('/api/create-payment', payload)
+      const res = await fetch('/api/create-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json().catch(() => ({}))
 
-      if (data.initPoint) {
-        // Meta Pixel: InitiateCheckout
-        if (window.fbq) {
+      if (res.ok && data?.initPoint) {
+        if (typeof window.fbq === 'function') {
           window.fbq('track', 'InitiateCheckout', {
-            value: pricing?.deposit || 0,
+            value: Math.round(pricing?.deposit || 0),
             currency: 'ARS',
             content_name: 'Reserva Espacio Auditorium',
             num_items: days,
-          })
+          }, data.reservationId ? { eventID: `ic_${data.reservationId}` } : undefined)
         }
-        // Redirect to Mercado Pago
-        window.location.href = data.initPoint
-      } else {
-        throw new Error('No se pudo iniciar el pago')
+        redirecting = true
+        window.location.assign(data.initPoint)
+        return
       }
+
+      const serverMsg = typeof data?.error === 'string' && data.error.length < 300 ? data.error : ''
+
+      if (res.status === 400) {
+        const message = serverMsg || 'Revisá los datos ingresados.'
+        if (data?.field) setServerFieldError({ field: data.field, message })
+        const dateFields = ['startDate', 'endDate', 'durationType', 'slotType', 'additionalHours']
+        setPaymentError({
+          title: 'Revisá los datos',
+          message,
+          action: dateFields.includes(data?.field) ? 'dates' : null,
+        })
+      } else if (res.status === 409) {
+        await refresh()
+        setPaymentError({
+          title: 'La fecha ya no está disponible',
+          message: serverMsg || 'Alguien reservó esa fecha hace instantes. Elegí otra fecha en el calendario.',
+          action: 'dates',
+        })
+      } else if (res.status === 429) {
+        setPaymentError({
+          title: 'Demasiados intentos',
+          message: serverMsg || 'Superaste la cantidad de intentos permitidos. Esperá unos minutos o escribinos por WhatsApp.',
+        })
+      } else if (res.status === 503) {
+        setPaymentError({
+          title: 'No pudimos verificar la disponibilidad',
+          message: serverMsg || 'Nuestro calendario no responde en este momento. Reintentá en unos minutos o escribinos por WhatsApp.',
+        })
+      } else if (res.status === 403) {
+        setPaymentError({
+          title: 'Verificación de seguridad',
+          message: serverMsg || 'No pudimos validar la verificación de seguridad. Volvé a intentarlo.',
+        })
+      } else {
+        setPaymentError({ title: 'Error al procesar el pago', message: serverMsg || GENERIC_ERROR })
+      }
+      toast.error(serverMsg || GENERIC_ERROR)
+      setTurnstileReset(n => n + 1)
     } catch (err) {
-      console.error('Payment error:', err)
-      const msg = err.response?.data?.error || err.message || 'Error al procesar. Intentá nuevamente.'
-      setPaymentError(msg)
-      toast.error(msg)
+      console.error('[booking] error de red:', err?.message || err)
+      setPaymentError({ title: 'Sin conexión', message: 'No pudimos conectarnos con el servidor. Revisá tu conexión e intentá de nuevo.' })
+      toast.error('No pudimos conectarnos con el servidor.')
+      setTurnstileReset(n => n + 1)
     } finally {
-      setIsLoading(false)
+      // Si estamos redirigiendo a Mercado Pago, el botón queda deshabilitado (evita duplicados).
+      if (!redirecting) {
+        submittingRef.current = false
+        setIsLoading(false)
+      }
     }
   }
 
+  const defaultNotes = init.personas ? `Cantidad estimada: ${init.personas} personas.` : ''
+
   return (
-    <div style={{ minHeight: '100vh', paddingBottom: '6rem' }}>
+    <div className="app-page" style={{ paddingBottom: '6rem' }}>
+      <Helmet>
+        <title>Reservar Auditorio en Recoleta — Precio Instantáneo | Espacio Auditorium</title>
+        <meta name="description" content="Reservá tu auditorio en Recoleta con el 30% de seña por Mercado Pago. Precio al instante, sin llamadas. 3 salas incluidas para hasta 36 personas. CABA." />
+        <link rel="canonical" href="https://www.espacioauditorium.com.ar/reservar" />
+      </Helmet>
+
       {/* Header */}
       <div
         style={{
@@ -143,22 +230,17 @@ export default function BookingPage() {
       >
         <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <button
-            onClick={() => step > 0 ? setStep(s => s - 1) : navigate('/')}
+            type="button"
+            onClick={() => (step > 0 ? goBackToDates() : navigate('/'))}
             className="btn btn-ghost-app btn-sm"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
             {step > 0 ? 'Atrás' : 'Inicio'}
           </button>
 
-          <span
-            style={{
-              fontFamily: 'var(--font-serif)',
-              fontSize: '1rem',
-              color: 'var(--app-muted)',
-            }}
-          >
+          <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem', color: 'var(--app-muted)' }}>
             Espacio Auditorium
           </span>
 
@@ -167,14 +249,15 @@ export default function BookingPage() {
       </div>
 
       <div className="container" style={{ paddingTop: '2.5rem' }}>
-        {/* Steps */}
-        <div className="steps">
+        {/* Pasos */}
+        <ol className="steps" aria-label="Pasos de la reserva">
           {STEPS.map((label, i) => (
-            <div
+            <li
               key={label}
               className={`step-item ${i === step ? 'active' : i < step ? 'done' : ''}`}
+              aria-current={i === step ? 'step' : undefined}
             >
-              <div className="step-num">
+              <div className="step-num" aria-hidden="true">
                 {i < step ? (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 6L9 17l-5-5" />
@@ -184,11 +267,11 @@ export default function BookingPage() {
                 )}
               </div>
               <span className="step-label">{label}</span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ol>
 
-        {/* Step 0: Fechas */}
+        {/* Paso 0: Fechas */}
         {step === 0 && (
           <div style={{ maxWidth: 700, margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
@@ -196,32 +279,24 @@ export default function BookingPage() {
                 ¿Cuándo es tu evento?
               </h1>
               <p style={{ color: 'var(--app-muted)' }}>
-                Las fechas bloqueadas ya tienen reserva confirmada
+                Los días tachados ya están ocupados o bloqueados
               </p>
             </div>
 
-            {/* Duration type selector */}
+            {/* Tipo de jornada */}
             <div className="card" style={{ marginBottom: '1.5rem' }}>
-              <p className="form-label" style={{ marginBottom: '1rem' }}>Tipo de jornada</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <p className="form-label" id="duration-label" style={{ marginBottom: '1rem' }}>Tipo de jornada</p>
+              <div role="group" aria-labelledby="duration-label" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 {[
-                  { value: 'half_day', label: 'Media jornada', sub: '4 hs · $520.000+IVA' },
-                  { value: 'full_day', label: 'Jornada completa', sub: '8 hs · $780.000+IVA' },
+                  { value: 'half_day', label: 'Media jornada', sub: `4 hs · ${formatARS(PRICES.HALF_DAY)}+IVA` },
+                  { value: 'full_day', label: 'Jornada completa', sub: `8 hs · ${formatARS(PRICES.FULL_DAY)}+IVA` },
                 ].map(opt => (
                   <button
                     key={opt.value}
                     type="button"
+                    aria-pressed={durationType === opt.value}
                     onClick={() => handleDurationChange(opt.value)}
-                    style={{
-                      padding: '1rem',
-                      border: `1px solid ${durationType === opt.value ? 'var(--gold-border)' : '#2a2a2a'}`,
-                      borderRadius: 'var(--radius)',
-                      background: durationType === opt.value ? 'var(--gold-dim)' : 'var(--bg-card2)',
-                      color: durationType === opt.value ? 'var(--app-text)' : 'var(--app-muted)',
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      transition: 'var(--transition)',
-                    }}
+                    className={`toggle-card ${durationType === opt.value ? 'is-active' : ''}`}
                   >
                     <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{opt.label}</div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--gold)', marginTop: '0.2rem' }}>{opt.sub}</div>
@@ -229,26 +304,18 @@ export default function BookingPage() {
                 ))}
               </div>
 
-              {/* Half-day slot selector */}
+              {/* Turno media jornada */}
               {durationType === 'half_day' && (
                 <div style={{ marginTop: '1rem' }}>
-                  <p className="form-label" style={{ marginBottom: '0.75rem' }}>Horario</p>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <p className="form-label" id="slot-label" style={{ marginBottom: '0.75rem' }}>Horario</p>
+                  <div role="group" aria-labelledby="slot-label" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                     {['half_day_morning', 'half_day_afternoon'].map(slot => (
                       <button
                         key={slot}
                         type="button"
+                        aria-pressed={slotType === slot}
                         onClick={() => setSlotType(slot)}
-                        style={{
-                          padding: '0.75rem',
-                          border: `1px solid ${slotType === slot ? 'var(--gold-border)' : '#2a2a2a'}`,
-                          borderRadius: 'var(--radius)',
-                          background: slotType === slot ? 'var(--gold-dim)' : 'var(--bg-card2)',
-                          color: slotType === slot ? 'var(--app-text)' : 'var(--app-muted)',
-                          cursor: 'pointer',
-                          fontSize: '0.88rem',
-                          transition: 'var(--transition)',
-                        }}
+                        className={`toggle-card toggle-card-sm ${slotType === slot ? 'is-active' : ''}`}
                       >
                         {TIME_SLOTS[slot].label}
                       </button>
@@ -257,73 +324,96 @@ export default function BookingPage() {
                 </div>
               )}
 
-              {/* Additional hours */}
+              {/* Horas adicionales */}
               <div style={{ marginTop: '1rem' }}>
-                <label className="form-label" style={{ marginBottom: '0.5rem', display: 'block' }}>
-                  Horas adicionales (opcional) — $130.000+IVA/hs
-                </label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <p className="form-label" id="hours-label" style={{ marginBottom: '0.5rem' }}>
+                  Horas adicionales (opcional) — {formatARS(PRICES.EXTRA_HOUR)}+IVA/h
+                </p>
+                <div role="group" aria-labelledby="hours-label" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <button
                     type="button"
                     className="btn btn-ghost-app btn-sm"
                     onClick={() => setAdditionalHours(h => Math.max(0, h - 1))}
                     disabled={additionalHours === 0}
+                    aria-label="Quitar una hora adicional"
                   >
                     −
                   </button>
-                  <span style={{ minWidth: 24, textAlign: 'center', fontWeight: 600 }}>{additionalHours}</span>
+                  <span style={{ minWidth: 24, textAlign: 'center', fontWeight: 600 }} aria-live="polite" aria-atomic="true">
+                    {additionalHours}
+                  </span>
                   <button
                     type="button"
                     className="btn btn-ghost-app btn-sm"
-                    onClick={() => setAdditionalHours(h => Math.min(6, h + 1))}
+                    onClick={() => setAdditionalHours(h => Math.min(LIMITS.maxAdditionalHours, h + 1))}
+                    disabled={additionalHours >= LIMITS.maxAdditionalHours}
+                    aria-label="Agregar una hora adicional"
                   >
                     +
                   </button>
-                  <span style={{ fontSize: '0.82rem', color: 'var(--app-dim)' }}>hs adicionales</span>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--app-dim)' }}>hs adicionales (máx. {LIMITS.maxAdditionalHours})</span>
                 </div>
               </div>
             </div>
 
-            {/* Calendar */}
+            {/* Calendario */}
             <div className="card" style={{ marginBottom: '1.5rem' }}>
               <BookingCalendar
                 slotType={slotType}
-                onSelect={handleDateSelect}
+                onSelect={handleRangeChange}
                 isDateBlocked={isDateBlocked}
                 loading={availabilityLoading}
                 range={dateRange}
-                setRange={handleCalendarRangeChange}
+                setRange={handleRangeChange}
               />
             </div>
 
-            {/* Price preview */}
+            {availabilityError && (
+              <div role="alert" className="alert-box alert-error" style={{ marginBottom: '1.5rem' }}>
+                <p style={{ fontWeight: 600, marginBottom: '0.35rem' }}>No pudimos verificar la disponibilidad</p>
+                <p style={{ marginBottom: '0.9rem' }}>
+                  Nuestro calendario no responde en este momento, así que no podemos confirmar fechas online.
+                  Reintentá en unos segundos o escribinos y te confirmamos por WhatsApp.
+                </p>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => refresh()}>Reintentar</button>
+                  <WhatsAppButton variant="inline" message="Hola, quiero reservar una fecha pero el calendario del sitio no carga. ¿Me confirman disponibilidad?" />
+                </div>
+              </div>
+            )}
+
+            {/* Precio */}
             {dateRange?.from && pricing && (
               <PriceBreakdown durationType={durationType} days={days} additionalHours={additionalHours} />
             )}
 
-            {/* Continue button */}
+            {/* Continuar */}
             <button
+              type="button"
               className="btn btn-gold btn-lg btn-full"
               style={{ marginTop: '1.5rem' }}
               onClick={handleContinueToForm}
-              disabled={!dateRange?.from || (dateRange?.from && isDateBlocked(dateRange.from, slotType))}
+              disabled={!canContinue}
             >
-              {dateRange?.from && isDateBlocked(dateRange.from, slotType) ? 'Fecha no disponible' : 'Continuar'}
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              {availabilityError
+                ? 'Disponibilidad no verificada'
+                : dateRange?.from && selectedBlocked
+                  ? 'Fecha no disponible'
+                  : 'Continuar'}
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </button>
 
             <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
-              <WhatsAppButton variant="inline" />
+              <WhatsAppButton variant="inline" message="Hola, quiero consultar por una reserva en Espacio Auditorium." />
             </div>
           </div>
         )}
 
-        {/* Step 1: Formulario */}
+        {/* Paso 1: Formulario */}
         {step === 1 && (
           <div style={{ maxWidth: 600, margin: '0 auto' }}>
-            {/* Summary card */}
             <div
               className="card card-gold"
               style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}
@@ -332,22 +422,23 @@ export default function BookingPage() {
                 <p style={{ fontSize: '0.8rem', color: 'var(--app-muted)', marginBottom: '0.2rem' }}>
                   {DURATION_LABELS[durationType]}
                   {slotType !== 'full_day' && ` · ${TIME_SLOTS[slotType].label}`}
+                  {additionalHours > 0 && ` · +${additionalHours} h`}
                 </p>
                 <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.05rem' }}>
                   {dateRange.from && format(dateRange.from, "d 'de' MMMM", { locale: es })}
-                  {dateRange.to && dateRange.to !== dateRange.from && (
-                    <> → {format(dateRange.to, "d 'de' MMMM yyyy", { locale: es })}</>
-                  )}
-                  {(!dateRange.to || dateRange.to === dateRange.from) && dateRange.from && (
-                    <> · {format(dateRange.from, 'yyyy')}</>
-                  )}
+                  {dateRange.to && dateRange.to.getTime() !== dateRange.from.getTime()
+                    ? <> → {format(dateRange.to, "d 'de' MMMM yyyy", { locale: es })}</>
+                    : <> · {format(dateRange.from, 'yyyy')}</>}
                 </p>
+                <button type="button" className="link-button" onClick={goBackToDates} style={{ marginTop: '0.35rem' }}>
+                  Cambiar fecha
+                </button>
               </div>
               {pricing && (
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--app-muted)' }}>Seña (30%)</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--app-muted)' }}>Seña ({PRICES.DEPOSIT_RATE * 100}%)</div>
                   <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', color: 'var(--gold)', fontWeight: 700 }}>
-                    {new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(pricing.deposit)}
+                    {formatARS(pricing.deposit)}
                   </div>
                 </div>
               )}
@@ -358,29 +449,30 @@ export default function BookingPage() {
                 Datos de la reserva
               </h1>
               <p style={{ color: 'var(--app-muted)', fontSize: '0.9rem' }}>
-                Completá el formulario y luego pagarás la seña del 30% con Mercado Pago.
+                Completá el formulario y después pagás la seña del {PRICES.DEPOSIT_RATE * 100}% con Mercado Pago.
               </p>
             </div>
 
             <div className="card">
-              <BookingForm onSubmit={handleFormSubmit} isLoading={isLoading} />
+              <BookingForm
+                onSubmit={handleFormSubmit}
+                isLoading={isLoading}
+                serverError={serverFieldError}
+                resetToken={turnstileReset}
+                defaultNotes={defaultNotes}
+              />
             </div>
 
             {paymentError && (
-              <div
-                style={{
-                  marginTop: '1.5rem',
-                  padding: '1rem',
-                  background: 'rgba(224,85,85,0.1)',
-                  border: '1px solid rgba(224,85,85,0.25)',
-                  borderRadius: 'var(--radius)',
-                  color: '#ef9a9a',
-                  fontSize: '0.9rem',
-                }}
-              >
-                <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Error al procesar el pago</p>
-                <p>{paymentError}</p>
-                <div style={{ marginTop: '1rem' }}>
+              <div role="alert" className="alert-box alert-error" style={{ marginTop: '1.5rem' }}>
+                <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>{paymentError.title}</p>
+                <p>{paymentError.message}</p>
+                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  {paymentError.action === 'dates' && (
+                    <button type="button" className="btn btn-outline btn-sm" onClick={goBackToDates}>
+                      Elegir otra fecha
+                    </button>
+                  )}
                   <WhatsAppButton variant="inline" message="Hola, tuve un problema al intentar reservar y necesito ayuda." />
                 </div>
               </div>
@@ -389,7 +481,7 @@ export default function BookingPage() {
         )}
       </div>
 
-      <WhatsAppButton variant="float" />
+      <WhatsAppButton variant="float" className="whatsapp-float-app" />
     </div>
   )
 }

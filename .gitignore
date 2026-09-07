@@ -1,5 +1,21 @@
-# Logs
-logs
+# --- Dependencias y builds ---
+node_modules/
+dist/
+dist-ssr/
+.vercel/
+
+# --- Secretos: NUNCA se commitean ---
+# Cualquier .env (local, production, etc.) salvo el ejemplo sin valores reales.
+.env
+.env.*
+.env*.local
+*.local
+!.env.example
+# Scripts .command con tokens hardcodeados (mover fuera del repo y rotar).
+*.command
+
+# --- Logs ---
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,24 +23,23 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-.env
-.env.local
-.env.*.local
-.vercel/
-
-# Editor directories and files
+# --- Editor / sistema ---
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-.vercel
-.env*.local
+
+# --- Material de marketing que no forma parte del sitio ---
+/assets/
+
+# --- Local Claude Code / assistant artifacts (not part of the site) ---
+.claude/
+Claude outputs/
+
+# --- Informe interno de auditoria de seguridad: no publicar en el repo (es publico) ---
+docs/AUDITORIA-2026-09.md

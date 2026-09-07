@@ -1,118 +1,134 @@
-import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '../lib/supabase'
-import { format, eachDayOfInterval } from 'date-fns'
-import axios from 'axios'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { format, isValid, addDays, differenceInCalendarDays } from 'date-fns'
 
-// Parsea "YYYY-MM-DD" como fecha LOCAL (evita corrimiento por timezone UTC)
-function localDate(dateStr) {
-  const [y, m, d] = dateStr.split('-').map(Number)
-  return new Date(y, m - 1, d)
+// Disponibilidad pública: única fuente = GET /api/availability
+// (reservas activas + holds + bloqueos manuales + Google Calendar, ya combinados en el server).
+// Nunca se consulta Supabase desde el navegador.
+
+const REFRESH_MS = 60 * 1000
+const MIN_GAP_MS = 5 * 1000      // evita ráfagas al alternar pestañas
+const FETCH_TIMEOUT_MS = 15 * 1000
+const MAX_RANGE_DAYS = 60        // tope defensivo al evaluar rangos en el cliente
+
+function toKey(date) {
+  if (typeof date === 'string') return /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null
+  if (date instanceof Date && isValid(date)) return format(date, 'yyyy-MM-dd')
+  return null
+}
+
+function buildMap(blocked) {
+  const map = new Map()
+  if (!Array.isArray(blocked)) return map
+  for (const b of blocked) {
+    if (!b || typeof b.date !== 'string') continue
+    const prev = map.get(b.date) || { morning: false, afternoon: false }
+    map.set(b.date, {
+      morning: prev.morning || b.morning === true,
+      afternoon: prev.afternoon || b.afternoon === true,
+    })
+  }
+  return map
 }
 
 export function useAvailability() {
-  const [blockedDates, setBlockedDates] = useState(new Set())
+  const [blocked, setBlocked] = useState(() => new Map())
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const [updatedAt, setUpdatedAt] = useState(null)
+  const lastFetchRef = useRef(0)
+  const inFlightRef = useRef(null)
+  const mountedRef = useRef(true)
 
-  const fetchBlockedDates = useCallback(async () => {
-    try {
-      // 1. Reservas confirmadas/pendientes en Supabase
-      const { data: reservations, error: resError } = await supabase
-        .from('reservations')
-        .select('start_date, end_date, slot_type, status')
-        .in('status', ['deposit_paid', 'confirmed'])
+  const fetchAvailability = useCallback(async ({ force = false } = {}) => {
+    const now = Date.now()
+    if (!force && now - lastFetchRef.current < MIN_GAP_MS) return
+    if (inFlightRef.current) return inFlightRef.current
+    lastFetchRef.current = now
 
-      if (resError) throw resError
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
 
-      // 2. Eventos de Google Calendar (via API serverless)
-      let calendarBlocked = []
+    const run = (async () => {
       try {
-        const { data } = await axios.get('/api/blocked-dates')
-        calendarBlocked = data.blocked || []
-      } catch {
-        // Si falla Google Calendar, seguimos con Supabase solo
+        const res = await fetch('/api/availability', {
+          signal: controller.signal,
+          headers: { Accept: 'application/json' },
+          cache: 'no-cache',
+        })
+        if (!res.ok) throw new Error(`availability ${res.status}`)
+        const data = await res.json()
+        if (!mountedRef.current) return
+        setBlocked(buildMap(data?.blocked))
+        setUpdatedAt(new Date())
+        setError(false)
+      } catch (err) {
+        if (!mountedRef.current) return
+        // Si falla, conservamos el último mapa conocido pero marcamos error:
+        // BookingPage no deja continuar hasta que vuelva a responder.
+        if (err?.name !== 'AbortError') console.error('[availability] no se pudo actualizar:', err?.message || err)
+        setError(true)
+      } finally {
+        clearTimeout(timer)
+        inFlightRef.current = null
+        if (mountedRef.current) setLoading(false)
       }
-
-      const blocked = new Set()
-
-      // Procesar reservas de Supabase
-      reservations?.forEach(r => {
-        const days = eachDayOfInterval({
-          start: localDate(r.start_date),
-          end: localDate(r.end_date),
-        })
-        days.forEach(d => {
-          const key = `${format(d, 'yyyy-MM-dd')}:${r.slot_type}`
-          blocked.add(key)
-          if (r.slot_type === 'full_day') {
-            blocked.add(`${format(d, 'yyyy-MM-dd')}:half_day_morning`)
-            blocked.add(`${format(d, 'yyyy-MM-dd')}:half_day_afternoon`)
-          }
-        })
-      })
-
-      // Procesar eventos de Google Calendar
-      calendarBlocked.forEach(r => {
-        const days = eachDayOfInterval({
-          start: localDate(r.start_date),
-          end: localDate(r.end_date),
-        })
-        days.forEach(d => {
-          const dateStr = format(d, 'yyyy-MM-dd')
-          blocked.add(`${dateStr}:${r.slot_type}`)
-          if (r.slot_type === 'full_day') {
-            blocked.add(`${dateStr}:half_day_morning`)
-            blocked.add(`${dateStr}:half_day_afternoon`)
-          } else {
-            // Si bloquea mañana o tarde, también bloquea full_day
-            blocked.add(`${dateStr}:full_day`)
-          }
-        })
-      })
-
-      setBlockedDates(blocked)
-    } catch (err) {
-      console.error('Error fetching availability:', err)
-    } finally {
-      setLoading(false)
-    }
+    })()
+    inFlightRef.current = run
+    return run
   }, [])
 
   useEffect(() => {
-    fetchBlockedDates()
+    mountedRef.current = true
+    fetchAvailability({ force: true })
 
-    // Realtime de Supabase para reservas nuevas
-    const channel = supabase
-      .channel('availability-watcher')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'reservations' }, fetchBlockedDates)
-      .subscribe()
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') fetchAvailability()
+    }, REFRESH_MS)
 
-    return () => supabase.removeChannel(channel)
-  }, [fetchBlockedDates])
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') fetchAvailability()
+    }
+    const onFocus = () => fetchAvailability()
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('focus', onFocus)
 
+    return () => {
+      mountedRef.current = false
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('focus', onFocus)
+    }
+  }, [fetchAvailability])
+
+  // Reglas de bloqueo (contrato §4):
+  //   full_day           → bloqueado si mañana O tarde están ocupadas
+  //   half_day_morning   → bloqueado si mañana ocupada
+  //   half_day_afternoon → bloqueado si tarde ocupada
   const isDateBlocked = useCallback((date, slotType = 'full_day') => {
-    const dateStr = format(date, 'yyyy-MM-dd')
-    if (slotType === 'full_day') {
-      return (
-        blockedDates.has(`${dateStr}:full_day`) ||
-        blockedDates.has(`${dateStr}:half_day_morning`) ||
-        blockedDates.has(`${dateStr}:half_day_afternoon`)
-      )
-    }
-    if (slotType === 'half_day_morning') {
-      return blockedDates.has(`${dateStr}:half_day_morning`) || blockedDates.has(`${dateStr}:full_day`)
-    }
-    if (slotType === 'half_day_afternoon') {
-      return blockedDates.has(`${dateStr}:half_day_afternoon`) || blockedDates.has(`${dateStr}:full_day`)
-    }
-    return false
-  }, [blockedDates])
+    const key = toKey(date)
+    if (!key) return true
+    const b = blocked.get(key)
+    if (!b) return false
+    if (slotType === 'half_day_morning') return b.morning
+    if (slotType === 'half_day_afternoon') return b.afternoon
+    return b.morning || b.afternoon
+  }, [blocked])
 
   const isRangeAvailable = useCallback((from, to, slotType) => {
     if (!from) return true
-    const end = to || from
-    const days = eachDayOfInterval({ start: from, end })
-    return days.every(d => !isDateBlocked(d, slotType))
+    const start = from instanceof Date ? from : new Date(from)
+    const endRaw = to ? (to instanceof Date ? to : new Date(to)) : start
+    if (!isValid(start) || !isValid(endRaw)) return false
+    const end = endRaw < start ? start : endRaw
+    const span = differenceInCalendarDays(end, start)
+    if (span > MAX_RANGE_DAYS) return false
+    for (let i = 0; i <= span; i++) {
+      if (isDateBlocked(addDays(start, i), slotType)) return false
+    }
+    return true
   }, [isDateBlocked])
 
-  return { blockedDates, loading, isDateBlocked, isRangeAvailable, refresh: fetchBlockedDates }
+  const refresh = useCallback(() => fetchAvailability({ force: true }), [fetchAvailability])
+
+  return { blocked, loading, error, updatedAt, isDateBlocked, isRangeAvailable, refresh }
 }

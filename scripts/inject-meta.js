@@ -1,4 +1,5 @@
-// Post-build script: genera un index.html con meta tags únicos por ruta.
+// Post-build: genera un index.html con meta tags únicos por ruta y agrega el
+// preload de la imagen hero SOLO en la home (es la única página donde es el LCP).
 // Vercel sirve dist/[ruta]/index.html directamente → Google ve el title correcto sin JS.
 import { readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { join, dirname } from 'path'
@@ -6,6 +7,9 @@ import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const distDir = join(__dirname, '..', 'dist')
+
+// Debe coincidir con src/components/HeroImage.jsx (HERO_WIDTHS / HERO_SIZES)
+const HERO_PRELOAD = '<link rel="preload" as="image" type="image/avif" href="/img/salagaudi-1600.avif" imagesrcset="/img/salagaudi-640.avif 640w, /img/salagaudi-1024.avif 1024w, /img/salagaudi-1600.avif 1600w" imagesizes="100vw" fetchpriority="high">'
 
 const routes = [
   {
@@ -56,36 +60,56 @@ const routes = [
     description: 'Reservá tu auditorio en Recoleta con el 30% de seña por Mercado Pago. Precio al instante, sin llamadas. 3 salas incluidas para hasta 36 personas. CABA.',
     canonical: 'https://www.espacioauditorium.com.ar/reservar',
   },
+  // Rutas de app: título propio y sin indexar
+  {
+    path: 'pago',
+    title: 'Estado de tu reserva | Espacio Auditorium',
+    description: 'Estado del pago de tu reserva en Espacio Auditorium.',
+    canonical: 'https://www.espacioauditorium.com.ar/pago',
+    noindex: true,
+  },
+  {
+    path: 'admin',
+    title: 'Panel de administración | Espacio Auditorium',
+    description: 'Panel interno.',
+    canonical: 'https://www.espacioauditorium.com.ar/admin',
+    noindex: true,
+  },
 ]
 
-const template = readFileSync(join(distDir, 'index.html'), 'utf-8')
+const templatePath = join(distDir, 'index.html')
+const template = readFileSync(templatePath, 'utf-8')
+if (template.includes('rel="preload" as="image"')) {
+  throw new Error('index.html no debería traer el preload del hero: lo agrega este script sólo para la home')
+}
+
+const escAttr = s => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;')
 
 for (const route of routes) {
   const url = route.canonical
   let html = template
 
-  // Title
   html = html.replace(/<title>[^<]*<\/title>/, `<title>${route.title}</title>`)
-
-  // Meta description
-  html = html.replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${route.description}">`)
-
-  // Canonical
+  html = html.replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${escAttr(route.description)}">`)
   html = html.replace(/<link rel="canonical"[^>]*>/, `<link rel="canonical" href="${url}">`)
-
-  // OG tags
   html = html.replace(/<meta property="og:url"[^>]*>/, `<meta property="og:url" content="${url}">`)
-  html = html.replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${route.title}">`)
-  html = html.replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${route.description}">`)
-
-  // Twitter Card
-  html = html.replace(/<meta name="twitter:title"[^>]*>/, `<meta name="twitter:title" content="${route.title}">`)
-  html = html.replace(/<meta name="twitter:description"[^>]*>/, `<meta name="twitter:description" content="${route.description}">`)
+  html = html.replace(/<meta property="og:title"[^>]*>/, `<meta property="og:title" content="${escAttr(route.title)}">`)
+  html = html.replace(/<meta property="og:description"[^>]*>/, `<meta property="og:description" content="${escAttr(route.description)}">`)
+  html = html.replace(/<meta name="twitter:title"[^>]*>/, `<meta name="twitter:title" content="${escAttr(route.title)}">`)
+  html = html.replace(/<meta name="twitter:description"[^>]*>/, `<meta name="twitter:description" content="${escAttr(route.description)}">`)
+  if (route.noindex) {
+    html = html.replace(/<link rel="canonical"[^>]*>/, m => `${m}\n    <meta name="robots" content="noindex, nofollow">`)
+  }
 
   const outDir = join(distDir, route.path)
   mkdirSync(outDir, { recursive: true })
   writeFileSync(join(outDir, 'index.html'), html)
   console.log(`✓ ${route.path}/index.html → "${route.title.slice(0, 60)}..."`)
 }
+
+// Home: preload del hero (LCP) justo después de la canónica
+const homeHtml = template.replace(/<link rel="canonical"[^>]*>/, m => `${m}\n    ${HERO_PRELOAD}`)
+writeFileSync(templatePath, homeHtml)
+console.log('✓ index.html (home) → preload del hero agregado')
 
 console.log(`\n✅ Meta injection completa — ${routes.length} rutas generadas.`)

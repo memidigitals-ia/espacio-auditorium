@@ -1,16 +1,30 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-)
+/**
+ * GET /api/keep-alive  (cron diario de Vercel: Authorization: Bearer $CRON_SECRET)
+ *
+ * Mantiene activo el proyecto de Supabase (plan free pausa por inactividad)
+ * con una consulta mínima. Exige el secreto del cron: sin él no se toca la
+ * base ni se revela si responde.
+ *
+ * 200 {ok:true} · 401/500 según checkCronAuth · 500 {error, ref} si la base no responde
+ */
+import { handleOptions, json, error, safeError, checkCronAuth, supabaseAdmin } from './_utils.js'
 
 export default async function handler(req, res) {
-  const { error } = await supabase.from('blocked_dates').select('id').limit(1)
-  if (error) {
-    console.error('[keep-alive] Supabase error:', error.message)
-    return res.status(500).json({ ok: false, error: error.message })
+  if (handleOptions(req, res)) return
+  if (req.method !== 'GET' && req.method !== 'POST') {
+    res.setHeader('Allow', 'GET, POST, OPTIONS')
+    return error(res, 'Method not allowed', 405)
   }
-  console.log('[keep-alive] Supabase ping OK', new Date().toISOString())
-  return res.status(200).json({ ok: true, ts: new Date().toISOString() })
+
+  const auth = checkCronAuth(req)
+  if (!auth.ok) return error(res, auth.message, auth.status)
+
+  try {
+    const { error: dbErr } = await supabaseAdmin().from('blocked_dates').select('id').limit(1)
+    if (dbErr) throw dbErr
+    console.log('[keep-alive] Supabase ping OK', new Date().toISOString())
+    return json(res, { ok: true })
+  } catch (err) {
+    return safeError(res, 'keep-alive', err)
+  }
 }

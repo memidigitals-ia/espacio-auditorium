@@ -31,11 +31,20 @@
     <meta name="twitter:title" content="Alquiler de Auditorio en Recoleta, CABA | Espacio Auditorium" />
     <meta name="twitter:description" content="Auditorio boutique para 36 personas y 3 salas en Recoleta, CABA. Conferencias, capacitaciones y streaming. Reserva online con precio instantáneo." />
     <meta name="twitter:image" content="https://www.espacioauditorium.com.ar/salagaudi.jpg" />
-    <!-- Preload imagen hero para LCP -->
-    <link rel="preload" as="image" href="/salagaudi.jpg" fetchpriority="high" />
+
+    <!-- Fuentes: preconnect + CSS no bloqueante (se aplica al cargar; sin JS, el <noscript> lo carga normal) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" />
+    </noscript>
+
     <!-- Schema.org: LocalBusiness + EventVenue -->
     <script type="application/ld+json">
     {
@@ -60,7 +69,7 @@
         "longitude": -58.3934
       },
       "image": "https://www.espacioauditorium.com.ar/salagaudi.jpg",
-      "openingHours": "Mo-Su 08:00-17:00",
+      "openingHours": "Mo-Su 08:00-22:00",
       "priceRange": "$$",
       "currenciesAccepted": "ARS",
       "paymentAccepted": "Credit Card, Debit Card, Bank Transfer",
@@ -86,7 +95,7 @@
         },
         {
           "@type": "Room",
-          "name": "Sala Miro",
+          "name": "Sala Miró",
           "description": "Sala de reuniones para 15 personas con TV 42\" HDMI y rotafolio",
           "maximumAttendeeCapacity": 15
         }
@@ -106,7 +115,7 @@
     }
     </script>
 
-    <!-- Schema.org: FAQ -->
+    <!-- Schema.org: FAQ (mismo contenido y misma política que la FAQ visible) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -117,7 +126,7 @@
           "name": "¿El precio es por sala o por el espacio completo?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "El precio es por el espacio completo. Al reservar tenés acceso a las tres salas (Gaudi, Pollock y Miro) durante el tiempo contratado."
+            "text": "El precio es por el espacio completo. Al reservar tenés acceso a las tres salas (Gaudi, Pollock y Miró) durante el tiempo contratado."
           }
         },
         {
@@ -141,7 +150,7 @@
           "name": "¿Qué incluye el espacio?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Sala Gaudi: proyector HDMI y rotafolio, 36 personas. Sala Pollock: TV 42 pulgadas HDMI, 12 personas. Sala Miro: TV 42 pulgadas HDMI y rotafolio, 15 personas. WiFi 100MB y aire acondicionado incluidos en todas las salas."
+            "text": "Sala Gaudi: proyector HDMI y rotafolio, 36 personas. Sala Pollock: TV 42 pulgadas HDMI, 12 personas. Sala Miró: TV 42 pulgadas HDMI y rotafolio, 15 personas. WiFi 100MB y aire acondicionado incluidos en todas las salas."
           }
         },
         {
@@ -181,41 +190,15 @@
           "name": "¿Cuál es la política de cancelación?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "La seña del 30% no es reembolsable, pero la fecha puede reprogramarse con al menos 7 días de anticipación. El saldo (70%) es totalmente reembolsable si se cancela con más de 5 días de anticipación."
+            "text": "La seña del 30% no es reembolsable. La fecha puede reprogramarse con al menos 7 días de anticipación. El saldo (70%) se abona hasta 5 días antes del evento."
           }
         }
       ]
     }
     </script>
 
-    <!-- Doppler Pop-up -->
+    <!-- Doppler (pop-up de suscripción): el script se carga diferido al final del body -->
     <meta name="dp-popup" content="d5l9RWbkJYmq6jiTvyC5%2bg%3d%3d">
-    <script src="https://cdn.fromdoppler.com/formgenerator/latest/vendor.js?81388958"></script>
-    <link rel="stylesheet" href="https://cdn.fromdoppler.com/formgenerator/latest/styles.css?81388958" />
-
-    <!-- Meta Pixel -->
-    <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '523234852893212');
-    fbq('track', 'PageView');
-    </script>
-    <!-- End Meta Pixel -->
-
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BCN6HGB610"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-BCN6HGB610');
-    </script>
   </head>
   <body>
     <!-- Meta Pixel noscript -->
@@ -224,5 +207,54 @@
     /></noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!--
+      Terceros diferidos (Meta Pixel, GA4, Doppler): se cargan después de `load` y en
+      tiempo ocioso, así no bloquean el primer render. Los stubs de fbq/gtag quedan
+      listos desde el principio para que ningún evento se pierda.
+      Nunca en /admin; Doppler tampoco en /reservar ni /pago.
+    -->
+    <script>
+    (function () {
+      var path = location.pathname;
+      var isAdmin = /^\/admin(\/|$)/.test(path);
+      var isApp = isAdmin || /^\/(reservar|pago)(\/|$)/.test(path);
+
+      if (!isAdmin) {
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', 'G-BCN6HGB610');
+
+        if (!window.fbq) {
+          var n = window.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+          if (!window._fbq) window._fbq = n;
+          n.push = n; n.loaded = true; n.version = '2.0'; n.queue = [];
+        }
+        window.fbq('init', '523234852893212');
+        window.fbq('track', 'PageView');
+      }
+
+      function loadScript(src) { var s = document.createElement('script'); s.async = true; s.src = src; document.head.appendChild(s); }
+      function loadStyle(href) { var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = href; document.head.appendChild(l); }
+
+      function loadThirdParties() {
+        if (!isAdmin) {
+          loadScript('https://www.googletagmanager.com/gtag/js?id=G-BCN6HGB610');
+          loadScript('https://connect.facebook.net/en_US/fbevents.js');
+        }
+        if (!isApp) {
+          loadStyle('https://cdn.fromdoppler.com/formgenerator/latest/styles.css?81388958');
+          loadScript('https://cdn.fromdoppler.com/formgenerator/latest/vendor.js?81388958');
+        }
+      }
+      function whenIdle(fn) {
+        if ('requestIdleCallback' in window) window.requestIdleCallback(fn, { timeout: 4000 });
+        else setTimeout(fn, 1500);
+      }
+      if (document.readyState === 'complete') whenIdle(loadThirdParties);
+      else window.addEventListener('load', function () { whenIdle(loadThirdParties); });
+    })();
+    </script>
   </body>
 </html>
