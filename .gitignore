@@ -43,3 +43,5 @@ Claude outputs/
 
 # --- Informe interno de auditoria de seguridad: no publicar en el repo (es publico) ---
 docs/AUDITORIA-2026-09.md
+.vercel
+.env*
