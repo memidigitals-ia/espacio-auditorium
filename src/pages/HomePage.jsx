@@ -179,6 +179,15 @@ export default function HomePage() {
             </div>
           ))}
         </div>
+
+        <div style={{ textAlign: 'center', marginTop: 56, paddingTop: 48, borderTop: '1px solid #1e1e1e' }}>
+          <p style={{ fontSize: 16, color: '#ccc', fontWeight: 300, marginBottom: 20 }}>
+            ¿Ya viviste tu evento en Espacio Auditorium? Contanos cómo te fue.
+          </p>
+          <a href="https://g.page/r/CdmZU4FUK3trEBM/review" target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: 'inline-block', textDecoration: 'none' }}>
+            Dejar mi reseña en Google →
+          </a>
+        </div>
       </section>
 
       {/* UBICACIÓN */}
