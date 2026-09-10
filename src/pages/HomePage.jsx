@@ -63,7 +63,7 @@ export default function HomePage() {
           </div>
 
           <div className="anim-5" style={{ display: 'flex', gap: 40, marginTop: 64, paddingTop: 40, borderTop: '1px solid var(--gray-light)' }}>
-            {[['4.9', 'Google Reviews'], ['36', 'Capacidad máx.'], ['3', 'Salas disponibles']].map(([num, label]) => (
+            {[['5.0', 'Google Reviews'], ['36', 'Capacidad máx.'], ['3', 'Salas disponibles']].map(([num, label]) => (
               <div key={label}>
                 <span style={{ fontFamily: 'var(--font-serif)', fontSize: 32, fontWeight: 400, color: 'var(--black)', display: 'block', lineHeight: 1, marginBottom: 6 }}>{num}</span>
                 <span style={{ fontSize: 12, color: 'var(--gray)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{label}</span>
@@ -164,7 +164,7 @@ export default function HomePage() {
       <section style={{ background: 'var(--black)', color: 'white', padding: '100px 80px' }}>
         <span className="section-tag" style={{ color: 'var(--gold)' }}>Lo que dicen los que estuvieron</span>
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'white', lineHeight: 1.15, marginBottom: 60 }}>
-          4.9 en Google.<br />{' '}Sin palabras.
+          5.0 en Google.<br />{' '}Sin palabras.
         </h2>
         <div className="reviews-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
           {[
