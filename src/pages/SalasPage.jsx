@@ -8,6 +8,7 @@ const salas = [
     descripcion: 'El auditorio principal. Formato teatro con butacas rojas, proyector HDMI, rotafolio y acústica profesional diseñada para presentaciones, charlas y streaming en vivo.',
     equipamiento: ['Proyector HDMI', 'Rotafolio', 'Acústica profesional', 'Iluminación regulable', 'WiFi 100MB'],
     badge: 'Auditorio principal',
+    imagen: '/salagaudi.jpg',
   },
   {
     nombre: 'Sala Pollock',
@@ -15,6 +16,7 @@ const salas = [
     descripcion: 'Sala de reuniones íntima. Ideal para sesiones de breakout, entrevistas, grabaciones de podcast o reuniones de equipo durante el evento.',
     equipamiento: ['TV 42" HDMI', 'Mesa de reuniones', 'WiFi 100MB', 'Aire acondicionado'],
     badge: 'Sala de reuniones',
+    imagen: '/salapollock.jpg',
   },
   {
     nombre: 'Sala Miró',
@@ -22,6 +24,7 @@ const salas = [
     descripcion: 'La sala más versátil del piso. Con TV HDMI y rotafolio, funciona para sesiones de trabajo en grupos pequeños, zona de networking o espacio de registro.',
     equipamiento: ['TV 42" HDMI', 'Rotafolio', 'WiFi 100MB', 'Aire acondicionado'],
     badge: 'Sala multipropósito',
+    imagen: '/salamiro.jpg',
   },
 ]
 
@@ -99,8 +102,8 @@ export default function SalasPage() {
                 </ul>
               </div>
               <div style={{ background: '#f5f3f0', minHeight: 320, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {sala.nombre === 'Sala Gaudi' ? (
-                  <img src="/salagaudi.jpg" alt="Sala Gaudi - Auditorio Espacio Auditorium Recoleta" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                {sala.imagen ? (
+                  <img src={sala.imagen} alt={`${sala.nombre} - Auditorio Espacio Auditorium Recoleta`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 ) : (
                   <div style={{ textAlign: 'center', padding: 40 }}>
                     <span style={{ fontFamily: 'var(--font-serif)', fontSize: 56, color: '#ddd', display: 'block', marginBottom: 16 }}>{sala.nombre.split(' ')[1]}</span>
