@@ -33,7 +33,7 @@ export function SiteFooter() {
             Auditorio boutique para eventos íntimos de hasta 36 personas en Recoleta, CABA.
           </p>
           <p style={{ fontSize: 13, color: 'var(--footer-text)' }}>
-            Marcelo T. de Alvear 2153, 2° Piso<br />
+            Marcelo T. de Alvear 2153, 2° Piso<br />{' '}
             Recoleta · CABA
           </p>
         </div>

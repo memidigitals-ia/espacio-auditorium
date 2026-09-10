@@ -29,7 +29,7 @@ export default function CotizarPage() {
           Cotizador online
         </span>
         <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(40px, 5vw, 60px)', fontWeight: 400, lineHeight: 1.1, color: 'var(--black)', marginBottom: 24 }}>
-          Precio al instante.<br /><em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Sin llamadas.</em>
+          Precio al instante.<br />{' '}<em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Sin llamadas.</em>
         </h1>
         <p style={{ fontSize: 17, fontWeight: 300, color: '#666', maxWidth: 520, lineHeight: 1.75, marginBottom: 48 }}>
           Elegís fecha, duración y horario — el precio aparece al instante. Reservás con el 30% de seña por Mercado Pago y la fecha queda bloqueada.

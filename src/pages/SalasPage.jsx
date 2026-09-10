@@ -52,7 +52,7 @@ export default function SalasPage() {
           Recoleta · Buenos Aires
         </span>
         <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(40px, 5vw, 64px)', fontWeight: 400, lineHeight: 1.1, marginBottom: 24 }}>
-          Tres salas.<br /><em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Un único precio.</em>
+          Tres salas.<br />{' '}<em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Un único precio.</em>
         </h1>
         <p style={{ fontSize: 18, fontWeight: 300, color: '#aaa', maxWidth: 560, lineHeight: 1.7, marginBottom: 48 }}>
           Al reservar Espacio Auditorium tenés acceso al piso completo. No se alquilan salas por separado.
@@ -118,7 +118,7 @@ export default function SalasPage() {
         <div style={{ maxWidth: 720, margin: '0 auto', textAlign: 'center' }}>
           <span className="section-tag" style={{ color: 'var(--gold)' }}>La diferencia</span>
           <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(28px, 3vw, 40px)', fontWeight: 400, lineHeight: 1.2, marginBottom: 20 }}>
-            Piso completo exclusivo.<br />Sin otros eventos.
+            Piso completo exclusivo.<br />{' '}Sin otros eventos.
           </h2>
           <p style={{ fontSize: 16, color: '#aaa', lineHeight: 1.75, fontWeight: 300, marginBottom: 48 }}>
             Espacio Auditorium trabaja con <strong style={{ color: 'white' }}>un único evento por día</strong>. Al reservar, las tres salas son exclusivamente tuyas durante todo el tiempo contratado. Sin ruido de fondo, sin compartir espacios comunes, sin interrupciones.
@@ -145,7 +145,7 @@ export default function SalasPage() {
           <div>
             <span className="section-tag">Conocé el espacio</span>
             <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(28px, 3vw, 40px)', fontWeight: 400, color: 'var(--black)', lineHeight: 1.2, marginBottom: 20 }}>
-              Recorrelo en 360°<br />antes de reservar.
+              Recorrelo en 360°<br />{' '}antes de reservar.
             </h2>
             <p style={{ fontSize: 15, color: '#666', lineHeight: 1.75, fontWeight: 300, marginBottom: 32 }}>
               Navegá el recorrido virtual y conocé cada rincón de las tres salas antes de dar el paso.

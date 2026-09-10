@@ -28,7 +28,7 @@ export default function LanzamientosPage() {
           Lanzamientos
         </span>
         <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(40px, 5vw, 64px)', fontWeight: 400, lineHeight: 1.1, marginBottom: 24 }}>
-          Venue para Lanzamientos<br /><em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>de Productos en CABA</em>
+          Venue para Lanzamientos<br />{' '}<em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>de Productos en CABA</em>
         </h1>
         <p style={{ fontSize: 17, fontWeight: 300, color: '#aaa', maxWidth: 580, lineHeight: 1.75, marginBottom: 48 }}>
           El lanzamiento es uno de los momentos más importantes para tu negocio. El espacio donde lo hacés define cómo te percibe tu audiencia. Espacio Auditorium es boutique por diseño: íntimo, profesional y exclusivo para tu evento.

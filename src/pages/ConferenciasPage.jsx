@@ -28,7 +28,7 @@ export default function ConferenciasPage() {
           Conferencias y Charlas
         </span>
         <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(40px, 5vw, 64px)', fontWeight: 400, lineHeight: 1.1, marginBottom: 24 }}>
-          Sala para Conferencias<br /><em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>y Charlas en Recoleta</em>
+          Sala para Conferencias<br />{' '}<em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>y Charlas en Recoleta</em>
         </h1>
         <p style={{ fontSize: 17, fontWeight: 300, color: '#aaa', maxWidth: 580, lineHeight: 1.75, marginBottom: 48 }}>
           Organizá tu conferencia o charla en un auditorio boutique diseñado para que tu presentación impacte desde el primer minuto. Hasta 36 personas, proyector HDMI, butacas y piso completo incluido.
@@ -50,7 +50,7 @@ export default function ConferenciasPage() {
       {/* Por qué */}
       <section style={{ background: 'var(--warm-white)', padding: '80px 80px' }}>
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(28px, 3vw, 40px)', fontWeight: 400, color: 'var(--black)', lineHeight: 1.2, marginBottom: 48 }}>
-          Por qué elegir Espacio Auditorium<br />para tu conferencia
+          Por qué elegir Espacio Auditorium<br />{' '}para tu conferencia
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
           {[

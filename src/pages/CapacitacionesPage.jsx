@@ -28,7 +28,7 @@ export default function CapacitacionesPage() {
           Capacitaciones y Workshops
         </span>
         <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(40px, 5vw, 64px)', fontWeight: 400, lineHeight: 1.1, marginBottom: 24 }}>
-          Espacio para Capacitaciones<br /><em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>y Workshops en Recoleta</em>
+          Espacio para Capacitaciones<br />{' '}<em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>y Workshops en Recoleta</em>
         </h1>
         <p style={{ fontSize: 17, fontWeight: 300, color: '#aaa', maxWidth: 580, lineHeight: 1.75, marginBottom: 48 }}>
           Llevá tu capacitación a un nivel profesional. Espacio Auditorium tiene el espacio, el equipamiento y la ubicación para que tus participantes lleguen, se concentren y aprendan sin distracciones.
@@ -66,7 +66,7 @@ export default function CapacitacionesPage() {
       {/* Tipos de capacitaciones */}
       <section style={{ background: 'var(--black)', padding: '80px 80px', color: 'white' }}>
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(28px, 3vw, 40px)', fontWeight: 400, lineHeight: 1.2, marginBottom: 40 }}>
-          Tipos de capacitaciones<br />que organizamos
+          Tipos de capacitaciones<br />{' '}que organizamos
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
           {[

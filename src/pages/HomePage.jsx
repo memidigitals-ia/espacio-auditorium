@@ -50,7 +50,7 @@ export default function HomePage() {
           </span>
 
           <h1 className="anim-2" style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(44px, 5vw, 68px)', fontWeight: 400, lineHeight: 1.1, color: 'var(--black)', marginBottom: 28, letterSpacing: '-0.01em' }}>
-            Tu evento<br />en <em style={{ fontStyle: 'italic', color: 'var(--gold)' }}>primera<br />fila.</em>
+            Tu evento<br />{' '}en <em style={{ fontStyle: 'italic', color: 'var(--gold)' }}>primera<br />{' '}fila.</em>
           </h1>
 
           <p className="anim-3" style={{ fontSize: 16, fontWeight: 300, color: '#555', lineHeight: 1.7, maxWidth: 420, marginBottom: 48 }}>
@@ -92,7 +92,7 @@ export default function HomePage() {
       <section className="usecases-section" style={{ background: 'var(--black)', padding: '100px 80px' }}>
         <span className="section-tag" style={{ color: 'var(--gold)' }}>Para qué lo usás</span>
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'white', lineHeight: 1.15, marginBottom: 20 }}>
-          El espacio se adapta<br />a tu formato.
+          El espacio se adapta<br />{' '}a tu formato.
         </h2>
         <p style={{ fontSize: 16, color: '#aaa', fontWeight: 300, marginBottom: 60 }}>Alquilás el espacio completo. Elegís cómo usarlo.</p>
 
@@ -115,7 +115,7 @@ export default function HomePage() {
         <div style={{ padding: '100px 64px', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: 'var(--off-white)' }}>
           <span className="section-tag">Conocé el espacio</span>
           <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'var(--black)', lineHeight: 1.15, marginBottom: 20 }}>
-            Recorrelo antes<br />de reservar.
+            Recorrelo antes<br />{' '}de reservar.
           </h2>
           <p style={{ fontSize: 16, color: '#666', fontWeight: 300, lineHeight: 1.7, marginBottom: 32 }}>
             Tres salas, un piso completo. Navegá el recorrido virtual 360° y conocé cada rincón del espacio antes de dar el paso.
@@ -135,7 +135,7 @@ export default function HomePage() {
           <div>
             <span className="section-tag">Cotizador instantáneo</span>
             <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'var(--black)', lineHeight: 1.15 }}>
-              Precio en<br />segundos.
+              Precio en<br />{' '}segundos.
             </h2>
           </div>
           <p style={{ fontSize: 16, color: 'var(--light-muted)', fontWeight: 300, lineHeight: 1.7 }}>
@@ -164,7 +164,7 @@ export default function HomePage() {
       <section style={{ background: 'var(--black)', color: 'white', padding: '100px 80px' }}>
         <span className="section-tag" style={{ color: 'var(--gold)' }}>Lo que dicen los que estuvieron</span>
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'white', lineHeight: 1.15, marginBottom: 60 }}>
-          4.9 en Google.<br />Sin palabras.
+          4.9 en Google.<br />{' '}Sin palabras.
         </h2>
         <div className="reviews-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
           {[
@@ -186,7 +186,7 @@ export default function HomePage() {
         <div style={{ padding: '100px 80px', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: 'var(--warm-white)' }}>
           <span className="section-tag">Dónde estamos</span>
           <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'var(--black)', lineHeight: 1.15, marginBottom: 20 }}>
-            En el corazón<br />de Recoleta.
+            En el corazón<br />{' '}de Recoleta.
           </h2>
           <p style={{ fontSize: 16, color: '#666', fontWeight: 300, lineHeight: 1.7 }}>
             Frente a la Facultad de Odontología de la UBA, a dos cuadras de Medicina. Fácil acceso en subte y colectivo.
@@ -239,7 +239,7 @@ export default function HomePage() {
         <div style={{ maxWidth: 800, margin: '0 auto' }}>
           <span className="section-tag">Preguntas frecuentes</span>
           <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 3.5vw, 48px)', fontWeight: 400, color: 'var(--black)', lineHeight: 1.15, marginBottom: 48 }}>
-            Todo lo que<br />necesitás saber.
+            Todo lo que<br />{' '}necesitás saber.
           </h2>
           <FAQList />
         </div>
@@ -248,7 +248,7 @@ export default function HomePage() {
       {/* CTA FINAL */}
       <section id="reservar" style={{ background: 'var(--gold)', padding: '100px 80px', textAlign: 'center' }}>
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(36px, 4vw, 56px)', fontWeight: 400, color: 'var(--black)', marginBottom: 24 }}>
-          ¿Tu fecha está<br />disponible?
+          ¿Tu fecha está<br />{' '}disponible?
         </h2>
         <p style={{ fontSize: 16, color: 'rgba(0,0,0,0.6)', fontWeight: 300, maxWidth: 480, margin: '0 auto 48px' }}>
           Cotizá en segundos y reservá con el 30% de seña. Sin llamadas, sin esperar respuesta.

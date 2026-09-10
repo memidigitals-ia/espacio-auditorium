@@ -28,7 +28,7 @@ export default function PodcastStreamingPage() {
           Podcast y Streaming
         </span>
         <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(40px, 5vw, 64px)', fontWeight: 400, lineHeight: 1.1, marginBottom: 24 }}>
-          Sala para Podcast<br /><em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>y Streaming en Recoleta</em>
+          Sala para Podcast<br />{' '}<em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>y Streaming en Recoleta</em>
         </h1>
         <p style={{ fontSize: 17, fontWeight: 300, color: '#aaa', maxWidth: 580, lineHeight: 1.75, marginBottom: 48 }}>
           La Sala Gaudi fue diseñada para que el contenido que producís quede profesional. Acústica controlada, iluminación adecuada y conectividad para streaming en vivo. Todo con audiencia presencial de hasta 36 personas.
@@ -44,7 +44,7 @@ export default function PodcastStreamingPage() {
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 40 }}>
           <div>
             <span style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(32px, 4vw, 52px)', color: 'white', fontWeight: 400, display: 'block', lineHeight: 1.2, marginBottom: 16 }}>
-              Producción de contenido<br />en un setting profesional
+              Producción de contenido<br />{' '}en un setting profesional
             </span>
             <span style={{ fontSize: 14, color: 'var(--gold)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Sala Gaudi · 36 personas · Acústica profesional</span>
           </div>
@@ -54,7 +54,7 @@ export default function PodcastStreamingPage() {
       {/* Por qué */}
       <section style={{ background: 'var(--warm-white)', padding: '80px 80px' }}>
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(28px, 3vw, 40px)', fontWeight: 400, color: 'var(--black)', lineHeight: 1.2, marginBottom: 48 }}>
-          Por qué Espacio Auditorium<br />para tu contenido
+          Por qué Espacio Auditorium<br />{' '}para tu contenido
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
           {[
